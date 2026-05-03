@@ -1,0 +1,1916 @@
+<?xml version="1.0" encoding="UTF-8"?><unload unload_date="2026-04-13 10:39:43">
+<sys_remote_update_set action="INSERT_OR_UPDATE">
+<application display_value="Global">global</application>
+<application_name>Global</application_name>
+<application_scope>global</application_scope>
+<application_version/>
+<collisions/>
+<commit_date/>
+<deleted/>
+<description/>
+<inserted/>
+<name>daily.work.18feb.Vaishali.Singh </name>
+<origin_sys_id/>
+<parent display_value=""/>
+<release_date/>
+<remote_base_update_set display_value=""/>
+<remote_parent_id/>
+<remote_sys_id>fd198083c3cf3e1468b2f54d05013147</remote_sys_id>
+<state>loaded</state>
+<summary/>
+<sys_class_name>sys_remote_update_set</sys_class_name>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d153e314c350031068b2f54d05013194</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<update_set display_value=""/>
+<update_source display_value=""/>
+<updated/>
+</sys_remote_update_set>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_security_acl_582bd217c343721068b2f54d050131fc</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl"><sys_security_acl action="INSERT_OR_UPDATE"><active>true</active><admin_overrides>true</admin_overrides><advanced>false</advanced><applies_to/><condition/><controlled_by_refs/><decision_type>allow</decision_type><description>Default access control on u_imgattachment</description><local_or_existing>Existing</local_or_existing><name>u_imgattachment</name><operation display_value="write">write</operation><script/><security_attribute/><sys_class_name>sys_security_acl</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:32</sys_created_on><sys_id>582bd217c343721068b2f54d050131fc</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_security_acl_582bd217c343721068b2f54d050131fc</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:32</sys_updated_on><type display_value="record">record</type></sys_security_acl></record_update>]]></payload>
+<payload_hash>1563637575</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>11536714c350031068b2f54d050131dd</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c2dd30000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>u_imgattachment</target_name>
+<type>Access Control</type>
+<update_domain>global</update_domain>
+<update_guid>e42b1617174372104ac643d6c6b3bf14</update_guid>
+<update_guid_history>e42b1617174372104ac643d6c6b3bf14:1563637575</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>DELETE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ws_operation_b1c2821fc38b321068b2f54d0501311c</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ws_operation"&gt;&lt;sys_ws_operation action="DELETE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;consumes&gt;application/json,application/xml,text/xml&lt;/consumes&gt;&lt;consumes_customized&gt;false&lt;/consumes_customized&gt;&lt;default_operation_uri/&gt;&lt;enforce_acl/&gt;&lt;http_method&gt;GET&lt;/http_method&gt;&lt;name&gt;getvariabledetails&lt;/name&gt;&lt;operation_script&gt;&lt;![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    var ritmNumber = request.queryParams.ritm;
+    var result = {};
+
+    if (!ritmNumber) {
+        response.setStatus(400);
+        result.error = "RITM number is required";
+        return result;
+    }
+
+    // Get RITM record
+    var ritmGR = new GlideRecord("sc_req_item");
+    ritmGR.addQuery("number", ritmNumber);
+    ritmGR.query();
+
+    if (!ritmGR.next()) {
+        response.setStatus(404);
+        result.error = "RITM not found";
+        return result;
+    }
+
+    result.ritm_number = ritmGR.number.toString();
+    result.sys_id = ritmGR.sys_id.toString();
+    result.variables = [];
+
+    // -----------------------------
+    // GlideVariablePool logic
+    // -----------------------------
+    var pool = new GlideVariablePoolQuestionSet();
+    pool.setRequestItem(ritmGR.sys_id);
+    pool.load();
+
+    var questions = pool.getFlatQuestions();
+
+    for (var i = 0; i &lt; questions.size(); i++) {
+
+        var q = questions.get(i);
+
+        var variableObj = {};
+        variableObj.name = q.getName().toString();
+        variableObj.label = q.getLabel().toString();
+        variableObj.value = q.getValue() ? q.getValue().toString() : "";
+        variableObj.display_value = q.getDisplayValue() ? q.getDisplayValue().toString() : "";
+
+        result.variables.push(variableObj);
+    }
+
+    return result;
+
+})(request, response);
+]]&gt;&lt;/operation_script&gt;&lt;operation_uri&gt;/api/1774551/ritm_details2&lt;/operation_uri&gt;&lt;produces&gt;application/json,application/xml,text/xml&lt;/produces&gt;&lt;produces_customized&gt;false&lt;/produces_customized&gt;&lt;relative_path&gt;/&lt;/relative_path&gt;&lt;request_example/&gt;&lt;requires_acl_authorization&gt;true&lt;/requires_acl_authorization&gt;&lt;requires_authentication&gt;true&lt;/requires_authentication&gt;&lt;requires_snc_internal_role&gt;true&lt;/requires_snc_internal_role&gt;&lt;short_description/&gt;&lt;sys_class_name&gt;sys_ws_operation&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 08:01:29&lt;/sys_created_on&gt;&lt;sys_id&gt;b1c2821fc38b321068b2f54d0501311c&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;getvariabledetails&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ws_operation_b1c2821fc38b321068b2f54d0501311c&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 08:03:49&lt;/sys_updated_on&gt;&lt;web_service_definition display_value="RITM Details2"&gt;c792069fc30b321068b2f54d050131c8&lt;/web_service_definition&gt;&lt;web_service_version/&gt;&lt;/sys_ws_operation&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;b1c2821fc38b321068b2f54d0501311c&lt;/id&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 08:01:28&lt;/sys_created_on&gt;&lt;sys_id&gt;b2d2025bc3cb321068b2f54d05013199&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 08:01:28&lt;/sys_updated_on&gt;&lt;table&gt;sys_ws_operation&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
+<payload_hash>-1980010975</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>11536714c350031068b2f54d050131e2</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c75073b4f0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>getvariabledetails</target_name>
+<type>Scripted REST Resource</type>
+<update_domain>global</update_domain>
+<update_guid>99e94617f44f3210ebcab6a142d9d35c</update_guid>
+<update_guid_history>99e94617f44f3210ebcab6a142d9d35c:-1980010975,c163421f03cb3210173fafde653c4249:-943808851,8fd20a5b90cb32106cbf5974a4244441:1496472425</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_page_47d0129fc38f321068b2f54d050131f7</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_page"><sp_page action="INSERT_OR_UPDATE"><category>custom</category><css/><draft>false</draft><dynamic_title_structure/><human_readable_url_structure/><id>imagewithinstace</id><internal>false</internal><omit_watcher>false</omit_watcher><public>false</public><roles/><seo_script/><short_description/><sys_class_name>sp_page</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:02:40</sys_created_on><sys_id>47d0129fc38f321068b2f54d050131f7</sys_id><sys_mod_count>0</sys_mod_count><sys_name>imagewithinstace</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_page_47d0129fc38f321068b2f54d050131f7</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:02:40</sys_updated_on><title>imagewithinstace - Test Page</title><use_seo_script>false</use_seo_script></sp_page><sys_translated_text action="delete_multiple" query="documentkey=47d0129fc38f321068b2f54d050131f7"/></record_update>]]></payload>
+<payload_hash>1163768481</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>1153e314c350031068b2f54d0501319a</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c752319830000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imagewithinstace</target_name>
+<type>Page</type>
+<update_domain>global</update_domain>
+<update_guid>07d0129f2a8f321058a43c5bf7a121fa</update_guid>
+<update_guid_history>07d0129f2a8f321058a43c5bf7a121fa:1163768481</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_security_acl_role_542bd217c343721068b2f54d05013173</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role"><sys_security_acl_role action="INSERT_OR_UPDATE"><sys_class_name>sys_security_acl_role</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:32</sys_created_on><sys_id>542bd217c343721068b2f54d05013173</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment.u_imgattachment_user</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_security_acl display_value="u_imgattachment">9c2bd217c343721068b2f54d05013151</sys_security_acl><sys_update_name>sys_security_acl_role_542bd217c343721068b2f54d05013173</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:32</sys_updated_on><sys_user_role display_value="u_imgattachment_user" name="u_imgattachment_user">002b1ad3c343721068b2f54d050131fb</sys_user_role></sys_security_acl_role></record_update>]]></payload>
+<payload_hash>-771015150</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>15536714c350031068b2f54d050131de</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c2cd50000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>u_imgattachment.u_imgattachment_user</target_name>
+<type>Access Roles</type>
+<update_domain>global</update_domain>
+<update_guid>902bd21700437210c01603486a50287e</update_guid>
+<update_guid_history>902bd21700437210c01603486a50287e:-771015150</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>asmt_metric_type_634e5032c34b7a1468b2f54d05013133</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="asmt_metric_type"><asmt_metric_type action="INSERT_OR_UPDATE"><active>true</active><allow_public>true</allow_public><allow_retake>false</allow_retake><anonymize>false</anonymize><business_rule/><chat_survey>false</chat_survey><condition table="asmt_metric_type">sys_id=634e5032c34b7a1468b2f54d05013133^EQ<item endquery="false" field="sys_id" goto="false" newquery="false" operator="=" or="false" value="634e5032c34b7a1468b2f54d05013133"/><item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/></condition><default_filter/><delete_business_rule/><description/><disable_ui_action/><display_all_filters>false</display_all_filters><display_field>name</display_field><duration>1970-01-08 00:00:00</duration><enable_ui_action/><end_note/><enforce_condition>false</enforce_condition><evaluation_method>survey</evaluation_method><filter_condition/><filter_table/><introduction/><job/><live_feed>false</live_feed><name>survey health</name><not_show_intro_note>false</not_show_intro_note><notify_if_overdue>false</notify_if_overdue><notify_user>true</notify_user><one_click_survey>false</one_click_survey><overdue_notify_user/><portal_pagination>category</portal_pagination><publish_state>published</publish_state><roles>survey_admin,survey_reader,public</roles><sample_metric/><scale_factor>10</scale_factor><schedule_period>0</schedule_period><schedule_type>on_demand</schedule_type><scoring_type>percent</scoring_type><signature/><source_table>sys_user</source_table><survey_owners>6816f79cc0a8016401c5a33be04be441</survey_owners><sys_class_name>asmt_metric_type</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-17 11:25:12</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>634e5032c34b7a1468b2f54d05013133</sys_id><sys_mod_count>6</sys_mod_count><sys_name>survey health</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>asmt_metric_type_634e5032c34b7a1468b2f54d05013133</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:38:22</sys_updated_on><table>asmt_metric_type</table><url>/sp</url><user_field/><user_field_business_rule/></asmt_metric_type><sys_translated_text action="delete_multiple" query="documentkey=634e5032c34b7a1468b2f54d05013133"/></record_update>]]></payload>
+<payload_hash>-1021480185</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>1553e314c350031068b2f54d05013196</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c6f0ac38e0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>asmt_metric_type</table>
+<target_name>survey health</target_name>
+<type>Assessment Metric Type</type>
+<update_domain>global</update_domain>
+<update_guid>31ca00037c4f7a14890a92469cc18e60</update_guid>
+<update_guid_history>31ca00037c4f7a14890a92469cc18e60:-1021480185,cb9aa8f27f0f7a14f27c1a1002511867:2070274515,bb44203e758b7a14f4815c4495c1f7f9:-520496761,144fd43abf4b7a1414c3147eb875554e:-347298851,c73fd8f6ee4b7a14606b293916e06ec1:-1260330806,6f4e9c366a4b7a1431652f58f6b9a01f:1399264347,a34e9c36bb4b7a1441cecbdf17f1601b:-824738600,274e9c36014b7a1411343a953e683117:1399264347</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_widget_03d0129fc38f321068b2f54d050131f1</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sp_widget"&gt;&lt;sp_widget action="INSERT_OR_UPDATE"&gt;&lt;category&gt;custom&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[api.controller=function($scope, $interval) {
+  /* widget controller */
+
+var c = this;
+
+};]]&gt;&lt;/client_script&gt;&lt;controller_as&gt;c&lt;/controller_as&gt;&lt;css/&gt;&lt;data_table&gt;sp_instance&lt;/data_table&gt;&lt;demo_data/&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list/&gt;&lt;has_preview&gt;true&lt;/has_preview&gt;&lt;id&gt;imagewithinstace&lt;/id&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link&gt;&lt;![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]&gt;&lt;/link&gt;&lt;name&gt;imagewithinstace&lt;/name&gt;&lt;option_schema/&gt;&lt;public&gt;false&lt;/public&gt;&lt;roles/&gt;&lt;script&gt;&lt;![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+	
+(function () {
+
+    data.image = "";
+
+    var gr = new GlideRecord("u_imgattachment");
+    gr.orderByDesc("sys_created_on");
+    gr.setLimit(1);
+    gr.query();
+
+    if (gr.next()) {
+        data.image = "data:" + gr.u_content_type + ";base64," + gr.u_base64;
+        data.fileName = gr.u_name + "";
+        data.created = gr.sys_created_on.getDisplayValue();
+    }
+
+})();
+
+
+})();]]&gt;&lt;/script&gt;&lt;servicenow&gt;false&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 09:02:40&lt;/sys_created_on&gt;&lt;sys_id&gt;03d0129fc38f321068b2f54d050131f1&lt;/sys_id&gt;&lt;sys_mod_count&gt;6&lt;/sys_mod_count&gt;&lt;sys_name&gt;imagewithinstace&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_03d0129fc38f321068b2f54d050131f1&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 10:13:13&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;div&gt;
+&lt;!-- your widget template --&gt;
+  
+&lt;div class="panel panel-default" ng-if="data.image"&gt;
+  &lt;div class="panel-heading"&gt;
+    &lt;b&gt;Latest Image from Instance A&lt;/b&gt;
+  &lt;/div&gt;
+
+  &lt;div class="panel-body text-center"&gt;
+    &lt;img ng-src="{{data.image}}"
+         style="max-width:100%; border-radius:12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" /&gt;
+    &lt;br&gt;&lt;br&gt;
+    &lt;small&gt;
+      &lt;b&gt;{{data.fileName}}&lt;/b&gt;&lt;br&gt;
+      Uploaded: {{data.created}}
+    &lt;/small&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div ng-if="!data.image" class="alert alert-info"&gt;
+  No image received yet.
+&lt;/div&gt;
+
+&lt;/div&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;&lt;/record_update&gt;</payload>
+<payload_hash>-6214660</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>1553e314c350031068b2f54d0501319b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c7563b0ec0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imagewithinstace</target_name>
+<type>Widget</type>
+<update_domain>global</update_domain>
+<update_guid>2c01e69b2a837210447ae0347c35cacd</update_guid>
+<update_guid_history>2c01e69b2a837210447ae0347c35cacd:-6214660,24fd569f1d4372100f9b9b366c535128:1083339472,52845adbe5cf321033b8eb416c3bdc01:125504737,4154d2d732cf3210d4b75505618a6d73:138232864,7e515adf848f32109ac1161fc3142df0:125504737,b8415adfea8f32107f0fefa4a9f0bd55:715095187,c3d0129fcc8f3210a3293857a4464df4:-456882120</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_documentation_u_imgattachment_u_attachment_sys_id_en</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_documentation element="u_attachment_sys_id" label="attachment sys_id" language="en" table="u_imgattachment"><sys_documentation action="INSERT_OR_UPDATE"><element>u_attachment_sys_id</element><help/><hint/><label>attachment sys_id</label><language>en</language><name>u_imgattachment</name><plural>attachment sys_ids</plural><sys_class_name>sys_documentation</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>ebbb9a97c343721068b2f54d05013137</sys_id><sys_mod_count>0</sys_mod_count><sys_name>attachment sys_id</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_documentation_u_imgattachment_u_attachment_sys_id_en</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:12</sys_updated_on><url/><url_target/></sys_documentation></sys_documentation></record_update>]]></payload>
+<payload_hash>2095437725</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>19536714c350031068b2f54d050131da</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754ea0ea0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.attachment sys_id</target_name>
+<type>Field Label</type>
+<update_domain>global</update_domain>
+<update_guid>e7bb9a97c843721060cadcbeaf04b191</update_guid>
+<update_guid_history>e7bb9a97c843721060cadcbeaf04b191:2095437725</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ui_section_ce887120d7330100fceaa6859e61037a</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_ui_section caption="" section_id="ce887120d7330100fceaa6859e61037a" sys_domain="global" table="asmt_assessment_instance_question" version="3" view=""><sys_ui_element action="INSERT_OR_UPDATE"><element>.begin_split</element><position>0</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>c86a00c7c3cf3e1468b2f54d0501318f</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type>.begin_split</type></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>source_table</element><position>1</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>486a00c7c3cf3e1468b2f54d05013190</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>source_id</element><position>2</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>c46a00c7c3cf3e1468b2f54d05013191</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>metric</element><position>3</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>446a00c7c3cf3e1468b2f54d05013192</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>value</element><position>4</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>c06a00c7c3cf3e1468b2f54d05013193</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>.split</element><position>5</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>406a00c7c3cf3e1468b2f54d05013194</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type>.split</type></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>category</element><position>6</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>cc6a00c7c3cf3e1468b2f54d05013194</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>sys_domain</element><position>7</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>4c6a00c7c3cf3e1468b2f54d05013195</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>instance</element><position>8</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>c86a00c7c3cf3e1468b2f54d05013196</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>.end_split</element><position>9</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>486a00c7c3cf3e1468b2f54d05013197</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type>.end_split</type></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>string_value</element><position>10</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>c46a00c7c3cf3e1468b2f54d05013198</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>reference_id</element><position>11</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>446a00c7c3cf3e1468b2f54d05013199</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>add_info</element><position>12</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>c06a00c7c3cf3e1468b2f54d0501319a</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>metric.correct_answer</element><position>13</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>406a00c7c3cf3e1468b2f54d0501319b</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>metric.correct_answer_checkbox</element><position>14</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>cc6a00c7c3cf3e1468b2f54d0501319b</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>metric.question</element><position>15</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>4c6a00c7c3cf3e1468b2f54d0501319c</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>metric.scored</element><position>16</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>c86a00c7c3cf3e1468b2f54d0501319d</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>metric.value_parameters</element><position>17</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>486a00c7c3cf3e1468b2f54d0501319e</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>metric.details</element><position>18</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 04:36:36</sys_created_on><sys_id>c46a00c7c3cf3e1468b2f54d0501319f</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="asmt_assessment_instance_question" sys_domain="global" view="Default view">ce887120d7330100fceaa6859e61037a</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 04:36:36</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_section action="INSERT_OR_UPDATE"><caption/><header>false</header><name>asmt_assessment_instance_question</name><roles/><sys_class_name>sys_ui_section</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2013-09-10 16:43:39</sys_created_on><sys_domain>global</sys_domain><sys_domain_path/><sys_id>ce887120d7330100fceaa6859e61037a</sys_id><sys_mod_count>0</sys_mod_count><sys_name>asmt_assessment_instance_question</sys_name><sys_overrides/><sys_package display_value="Assessment" source="com.snc.assessment_core">d935fcadbc3432108bb2f58e8d11a158</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_ui_section_ce887120d7330100fceaa6859e61037a</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2013-09-10 16:43:39</sys_updated_on><sys_user/><title>true</title><view display_value="Default view" name="NULL">Default view</view><view_name/></sys_ui_section></sys_ui_section></record_update>]]></payload>
+<payload_hash>932841577</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>19536714c350031068b2f54d050131df</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c6f0925870000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>asmt_assessment_instance_question</table>
+<target_name>Assessment Instance Question</target_name>
+<type>Form Layout</type>
+<update_domain>global</update_domain>
+<update_guid>446a00c711cf3e14f929b535fd06efa4</update_guid>
+<update_guid_history>446a00c711cf3e14f929b535fd06efa4:932841577,712ac08711cf3e14c6a4d4ead65bae6c:1474533494,7ec94c07dfcf3e144014d34115975bcb:636138344,eac90cc321cf3e1457c1929aabc6e5fe:2109625110</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_container_1797b59fc30b321068b2f54d050131e8</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_container"><sp_container action="INSERT_OR_UPDATE"><background_color/><background_image/><background_style>default</background_style><bootstrap_alt>false</bootstrap_alt><class_name/><container_class_name/><name>imagefromexternaltools - Container 3</name><order>3</order><semantic_tag/><sp_page display_value="imagefromexternaltools">18573d5fc30b321068b2f54d0501317d</sp_page><subheader>false</subheader><sys_class_name>sp_container</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 07:12:22</sys_created_on><sys_id>1797b59fc30b321068b2f54d050131e8</sys_id><sys_mod_count>2</sys_mod_count><sys_name>imagefromexternaltools - Container 3</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_container_1797b59fc30b321068b2f54d050131e8</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 12:10:11</sys_updated_on><title/><width>container</width></sp_container></record_update>]]></payload>
+<payload_hash>-1949137601</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>1953e314c350031068b2f54d05013197</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c75cec5800000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imagefromexternaltools - Container 3</target_name>
+<type>Container</type>
+<update_domain>global</update_domain>
+<update_guid>b1cb3253254b721068907e16dcddd99e</update_guid>
+<update_guid_history>b1cb3253254b721068907e16dcddd99e:-1949137601,68a731dfcd0b3210034224ef33d50e74:-658458176,2b97b59f4d0b3210b09168c692d372ec:632221249</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_dictionary_u_imgattachment_null</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update&gt;&lt;sys_dictionary action="INSERT_OR_UPDATE" element="" table="u_imgattachment"&gt;&lt;active&gt;true&lt;/active&gt;&lt;array&gt;false&lt;/array&gt;&lt;attributes/&gt;&lt;audit&gt;false&lt;/audit&gt;&lt;calculation&gt;&lt;![CDATA[(function calculatedFieldValue(current) {
+
+	// Add your code here
+	return '';  // return the calculated value
+
+})(current);]]&gt;&lt;/calculation&gt;&lt;choice/&gt;&lt;choice_field/&gt;&lt;choice_table/&gt;&lt;column_label/&gt;&lt;comments/&gt;&lt;create_roles/&gt;&lt;default_value/&gt;&lt;defaultsort/&gt;&lt;delete_roles/&gt;&lt;dependent/&gt;&lt;dependent_on_field/&gt;&lt;display&gt;false&lt;/display&gt;&lt;dynamic_creation&gt;false&lt;/dynamic_creation&gt;&lt;dynamic_creation_script/&gt;&lt;dynamic_default_value/&gt;&lt;dynamic_ref_qual/&gt;&lt;element/&gt;&lt;element_reference&gt;false&lt;/element_reference&gt;&lt;foreign_database/&gt;&lt;formula/&gt;&lt;function_definition/&gt;&lt;function_field&gt;false&lt;/function_field&gt;&lt;internal_type display_value="Collection"&gt;collection&lt;/internal_type&gt;&lt;mandatory&gt;false&lt;/mandatory&gt;&lt;max_length&gt;40&lt;/max_length&gt;&lt;name&gt;u_imgattachment&lt;/name&gt;&lt;next_element/&gt;&lt;primary&gt;false&lt;/primary&gt;&lt;read_only&gt;false&lt;/read_only&gt;&lt;read_roles/&gt;&lt;reference/&gt;&lt;reference_cascade_rule/&gt;&lt;reference_floats&gt;false&lt;/reference_floats&gt;&lt;reference_key/&gt;&lt;reference_qual/&gt;&lt;reference_qual_condition/&gt;&lt;reference_type/&gt;&lt;spell_check&gt;false&lt;/spell_check&gt;&lt;staged&gt;false&lt;/staged&gt;&lt;sys_class_name&gt;sys_dictionary&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 09:47:32&lt;/sys_created_on&gt;&lt;sys_id&gt;6c2b1617c343721068b2f54d05013152&lt;/sys_id&gt;&lt;sys_name&gt;u_imgattachment&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_dictionary_u_imgattachment_null&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 09:47:32&lt;/sys_updated_on&gt;&lt;table_reference&gt;false&lt;/table_reference&gt;&lt;text_index&gt;false&lt;/text_index&gt;&lt;unique&gt;false&lt;/unique&gt;&lt;use_dependent_field&gt;false&lt;/use_dependent_field&gt;&lt;use_dynamic_default&gt;false&lt;/use_dynamic_default&gt;&lt;use_reference_qualifier&gt;simple&lt;/use_reference_qualifier&gt;&lt;virtual&gt;false&lt;/virtual&gt;&lt;virtual_type&gt;script&lt;/virtual_type&gt;&lt;widget/&gt;&lt;write_roles/&gt;&lt;xml_view&gt;false&lt;/xml_view&gt;&lt;/sys_dictionary&gt;&lt;/record_update&gt;</payload>
+<payload_hash>1648637311</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>1953e314c350031068b2f54d0501319c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c34970000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment</target_name>
+<type>Dictionary</type>
+<update_domain>global</update_domain>
+<update_guid>f42b1617a14372108f8e612fb4db0fed</update_guid>
+<update_guid_history>f42b1617a14372108f8e612fb4db0fed:1648637311</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_documentation_u_imgattachment_u_source_instance_en</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_documentation element="u_source_instance" label="source instance" language="en" table="u_imgattachment"><sys_documentation action="INSERT_OR_UPDATE"><element>u_source_instance</element><help/><hint/><label>source instance</label><language>en</language><name>u_imgattachment</name><plural>source instances</plural><sys_class_name>sys_documentation</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>2bbb9a97c343721068b2f54d0501313d</sys_id><sys_mod_count>0</sys_mod_count><sys_name>source instance</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_documentation_u_imgattachment_u_source_instance_en</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:12</sys_updated_on><url/><url_target/></sys_documentation></sys_documentation></record_update>]]></payload>
+<payload_hash>384089885</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>1d536714c350031068b2f54d050131db</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754ea0f70000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.source instance</target_name>
+<type>Field Label</type>
+<update_domain>global</update_domain>
+<update_guid>67bb9a971743721064961d8cf55f9994</update_guid>
+<update_guid_history>67bb9a971743721064961d8cf55f9994:384089885</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ws_definition_c792069fc30b321068b2f54d050131c8</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_definition"><sys_ws_definition action="INSERT_OR_UPDATE"><active>true</active><base_uri>/api/1774551/ritm_details2</base_uri><consumes>application/json,application/xml,text/xml</consumes><consumes_customized>false</consumes_customized><default_version>No active default version</default_version><doc_link/><enforce_acl>3e85460fa31431108029835e26fcda42</enforce_acl><is_versioned>false</is_versioned><name>RITM Details2</name><namespace>1774551</namespace><produces>application/json,application/xml,text/xml</produces><produces_customized>false</produces_customized><service_id>ritm_details2</service_id><short_description/><sys_class_name>sys_ws_definition</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 08:01:03</sys_created_on><sys_id>c792069fc30b321068b2f54d050131c8</sys_id><sys_mod_count>0</sys_mod_count><sys_name>RITM Details2</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_ws_definition_c792069fc30b321068b2f54d050131c8</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 08:01:03</sys_updated_on></sys_ws_definition></record_update>]]></payload>
+<payload_hash>1561493170</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>1d536714c350031068b2f54d050131e0</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c74eaaf630000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>RITM Details2</target_name>
+<type>Scripted REST API</type>
+<update_domain>global</update_domain>
+<update_guid>ecc2ca1bc8cb32107c34a9ea8ef2b28c</update_guid>
+<update_guid_history>ecc2ca1bc8cb32107c34a9ea8ef2b28c:1561493170</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_instance_1bd0529fc38f321068b2f54d0501310a</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sp_instance"&gt;&lt;sp_instance action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;advanced_placeholder_dimensions&gt;false&lt;/advanced_placeholder_dimensions&gt;&lt;async_load&gt;false&lt;/async_load&gt;&lt;async_load_device_type&gt;desktop,tablet,mobile&lt;/async_load_device_type&gt;&lt;async_load_trigger&gt;viewport&lt;/async_load_trigger&gt;&lt;class_name/&gt;&lt;color&gt;default&lt;/color&gt;&lt;css/&gt;&lt;glyph/&gt;&lt;id/&gt;&lt;order&gt;1&lt;/order&gt;&lt;placeholder_dimensions&gt;{&amp;#13;	"mobile": {&amp;#13;		"height": "250px",&amp;#13;		"width": "100%"&amp;#13;	},&amp;#13;	"desktop": {&amp;#13;		"height": "250px",&amp;#13;		"width": "100%"&amp;#13;	},&amp;#13;	"tablet": {&amp;#13;		"height": "250px",&amp;#13;		"width": "100%"&amp;#13;	}&amp;#13;}&lt;/placeholder_dimensions&gt;&lt;placeholder_dimensions_script&gt;&lt;![CDATA[function evaluateConfig(options) { return {	"mobile": {		"height": "250px",		"width": "100%"	},	"desktop": {		"height": "250px",		"width": "100%"	},	"tablet": {		"height": "250px",		"width": "100%"	}}; }]]&gt;&lt;/placeholder_dimensions_script&gt;&lt;placeholder_template&gt;&amp;lt;!-- 
+	AngularJS template with configurable options.
+	Use the `options` object to control dynamic behavior.
+	Example: Display an element when max row count is 10:
+	&amp;lt;div ng-if="options.maxRowCount === 10"&amp;gt;&amp;lt;/div&amp;gt;
+	The `skeleton-container` class is used for loading placeholders.
+--&amp;gt;
+	&amp;lt;div class="skeleton-container"&amp;gt;
+	&amp;lt;!-- Header Skeleton --&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-header"&amp;gt;&amp;lt;/div&amp;gt;
+	&amp;lt;!-- Body Skeleton --&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-line"&amp;gt;&amp;lt;/div&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-line small"&amp;gt;&amp;lt;/div&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-line medium"&amp;gt;&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;&lt;/placeholder_template&gt;&lt;preserve_placeholder_size&gt;false&lt;/preserve_placeholder_size&gt;&lt;roles/&gt;&lt;short_description/&gt;&lt;size&gt;md&lt;/size&gt;&lt;sp_column display_value="1"&gt;dbd0529fc38f321068b2f54d05013105&lt;/sp_column&gt;&lt;sp_widget display_value="imagewithinstace"&gt;03d0129fc38f321068b2f54d050131f1&lt;/sp_widget&gt;&lt;sys_class_name&gt;sp_instance&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 09:02:40&lt;/sys_created_on&gt;&lt;sys_id&gt;1bd0529fc38f321068b2f54d0501310a&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_name/&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_instance_1bd0529fc38f321068b2f54d0501310a&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 09:02:40&lt;/sys_updated_on&gt;&lt;title/&gt;&lt;url/&gt;&lt;widget_parameters/&gt;&lt;/sp_instance&gt;&lt;sys_translated_text action="delete_multiple" query="documentkey=1bd0529fc38f321068b2f54d0501310a"/&gt;&lt;/record_update&gt;</payload>
+<payload_hash>765515990</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>1d53e314c350031068b2f54d05013198</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c75231a3f0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name/>
+<type>Instance</type>
+<update_domain>global</update_domain>
+<update_guid>5fd0529f4b8f3210f3fbe4a94dc8830d</update_guid>
+<update_guid_history>5fd0529f4b8f3210f3fbe4a94dc8830d:765515990</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_dictionary_u_imgattachment_u_name</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_dictionary action="INSERT_OR_UPDATE" element="u_name" table="u_imgattachment"><active>true</active><array>false</array><attributes>edge_encryption_enabled=true</attributes><audit>false</audit><calculation/><choice>0</choice><choice_field/><choice_table/><column_label>name</column_label><comments/><create_roles/><default_value/><defaultsort/><delete_roles/><dependent/><dependent_on_field/><display>false</display><dynamic_creation>false</dynamic_creation><dynamic_creation_script/><dynamic_default_value/><dynamic_ref_qual/><element>u_name</element><element_reference>false</element_reference><foreign_database/><formula/><function_definition/><function_field>false</function_field><internal_type display_value="String">string</internal_type><mandatory>false</mandatory><max_length>40</max_length><name>u_imgattachment</name><next_element/><primary>false</primary><read_only>false</read_only><read_roles/><reference/><reference_cascade_rule/><reference_floats>false</reference_floats><reference_key/><reference_qual/><reference_qual_condition/><reference_type/><spell_check>false</spell_check><staged>false</staged><sys_class_name>sys_dictionary</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>ebbb9a97c343721068b2f54d0501314b</sys_id><sys_name>name</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_dictionary_u_imgattachment_u_name</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:12</sys_updated_on><table_reference>false</table_reference><text_index>false</text_index><unique>false</unique><use_dependent_field>false</use_dependent_field><use_dynamic_default>false</use_dynamic_default><use_reference_qualifier>simple</use_reference_qualifier><virtual>false</virtual><virtual_type>script</virtual_type><widget/><write_roles/><xml_view>false</xml_view></sys_dictionary></record_update>]]></payload>
+<payload_hash>1182138686</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>1d53e314c350031068b2f54d0501319d</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754e9ff00000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.name</target_name>
+<type>Dictionary</type>
+<update_domain>global</update_domain>
+<update_guid>27bb9a97c94372104830720450063b76</update_guid>
+<update_guid_history>27bb9a97c94372104830720450063b76:1182138686</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_documentation_u_imgattachment__en</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_documentation element="" label="Imgattachment" language="en" table="u_imgattachment"><sys_documentation action="INSERT_OR_UPDATE"><element/><help/><hint/><label>Imgattachment</label><language>en</language><name>u_imgattachment</name><plural>Imgattachments</plural><sys_class_name>sys_documentation</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:33</sys_created_on><sys_id>202b1617c343721068b2f54d05013171</sys_id><sys_mod_count>0</sys_mod_count><sys_name>Imgattachment</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_documentation_u_imgattachment__en</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:33</sys_updated_on><url/><url_target/></sys_documentation></sys_documentation></record_update>]]></payload>
+<payload_hash>-1868895741</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>51536714c350031068b2f54d050131dc</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c34b30000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment</target_name>
+<type>Field Label</type>
+<update_domain>global</update_domain>
+<update_guid>b82b16175d437210cad0b4fdd6c42df0</update_guid>
+<update_guid_history>b82b16175d437210cad0b4fdd6c42df0:-1868895741</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ws_definition_f32c5a1bc343721068b2f54d05013161</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_definition"><sys_ws_definition action="INSERT_OR_UPDATE"><active>true</active><base_uri>/api/1774551/recive_image</base_uri><consumes>application/json,application/xml,text/xml</consumes><consumes_customized>false</consumes_customized><default_version>No active default version</default_version><doc_link/><enforce_acl>3e85460fa31431108029835e26fcda42</enforce_acl><is_versioned>false</is_versioned><name>recive image </name><namespace>1774551</namespace><produces>application/json,application/xml,text/xml</produces><produces_customized>false</produces_customized><service_id>recive_image</service_id><short_description/><sys_class_name>sys_ws_definition</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:52:31</sys_created_on><sys_id>f32c5a1bc343721068b2f54d05013161</sys_id><sys_mod_count>0</sys_mod_count><sys_name>recive image </sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_ws_definition_f32c5a1bc343721068b2f54d05013161</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:52:31</sys_updated_on></sys_ws_definition></record_update>]]></payload>
+<payload_hash>30631994</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>51536714c350031068b2f54d050131e1</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c7550bcbe0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>recive image </target_name>
+<type>Scripted REST API</type>
+<update_domain>global</update_domain>
+<update_guid>514c5e1bcf437210e463edeac86e4854</update_guid>
+<update_guid_history>514c5e1bcf437210e463edeac86e4854:30631994</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_instance_52db7653c34b721068b2f54d050131e3</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sp_instance"&gt;&lt;sp_instance action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;advanced_placeholder_dimensions&gt;false&lt;/advanced_placeholder_dimensions&gt;&lt;async_load&gt;false&lt;/async_load&gt;&lt;async_load_device_type&gt;desktop,tablet,mobile&lt;/async_load_device_type&gt;&lt;async_load_trigger&gt;viewport&lt;/async_load_trigger&gt;&lt;class_name/&gt;&lt;color&gt;default&lt;/color&gt;&lt;css/&gt;&lt;glyph/&gt;&lt;id/&gt;&lt;order&gt;1&lt;/order&gt;&lt;placeholder_dimensions&gt;{&amp;#13;	"mobile": {&amp;#13;		"height": "250px",&amp;#13;		"width": "100%"&amp;#13;	},&amp;#13;	"desktop": {&amp;#13;		"height": "250px",&amp;#13;		"width": "100%"&amp;#13;	},&amp;#13;	"tablet": {&amp;#13;		"height": "250px",&amp;#13;		"width": "100%"&amp;#13;	}&amp;#13;}&lt;/placeholder_dimensions&gt;&lt;placeholder_dimensions_script&gt;&lt;![CDATA[function evaluateConfig(options) { return {	"mobile": {		"height": "250px",		"width": "100%"	},	"desktop": {		"height": "250px",		"width": "100%"	},	"tablet": {		"height": "250px",		"width": "100%"	}}; }]]&gt;&lt;/placeholder_dimensions_script&gt;&lt;placeholder_template&gt;&amp;lt;!-- 
+	AngularJS template with configurable options.
+	Use the `options` object to control dynamic behavior.
+	Example: Display an element when max row count is 10:
+	&amp;lt;div ng-if="options.maxRowCount === 10"&amp;gt;&amp;lt;/div&amp;gt;
+	The `skeleton-container` class is used for loading placeholders.
+--&amp;gt;
+	&amp;lt;div class="skeleton-container"&amp;gt;
+	&amp;lt;!-- Header Skeleton --&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-header"&amp;gt;&amp;lt;/div&amp;gt;
+	&amp;lt;!-- Body Skeleton --&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-line"&amp;gt;&amp;lt;/div&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-line small"&amp;gt;&amp;lt;/div&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-line medium"&amp;gt;&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;&lt;/placeholder_template&gt;&lt;preserve_placeholder_size&gt;false&lt;/preserve_placeholder_size&gt;&lt;roles/&gt;&lt;short_description/&gt;&lt;size&gt;md&lt;/size&gt;&lt;sp_column display_value="1"&gt;6acb7253c34b721068b2f54d05013149&lt;/sp_column&gt;&lt;sp_widget display_value="attachmentviaapi"&gt;e655f65bc3c7721068b2f54d050131f2&lt;/sp_widget&gt;&lt;sys_class_name&gt;sp_instance&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 12:10:29&lt;/sys_created_on&gt;&lt;sys_id&gt;52db7653c34b721068b2f54d050131e3&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_name/&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_instance_52db7653c34b721068b2f54d050131e3&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 12:10:29&lt;/sys_updated_on&gt;&lt;title/&gt;&lt;url/&gt;&lt;widget_parameters/&gt;&lt;/sp_instance&gt;&lt;sys_translated_text action="delete_multiple" query="documentkey=52db7653c34b721068b2f54d050131e3"/&gt;&lt;/record_update&gt;</payload>
+<payload_hash>-1233126840</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>5153e314c350031068b2f54d05013199</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c75cf0c910000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name/>
+<type>Instance</type>
+<update_domain>global</update_domain>
+<update_guid>96db76535c4b7210a76aead9ee6506e8</update_guid>
+<update_guid_history>96db76535c4b7210a76aead9ee6506e8:-1233126840</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_dictionary_u_imgattachment_u_source_instance</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_dictionary action="INSERT_OR_UPDATE" element="u_source_instance" table="u_imgattachment"><active>true</active><array>false</array><attributes>edge_encryption_enabled=true</attributes><audit>false</audit><calculation/><choice>0</choice><choice_field/><choice_table/><column_label>source instance</column_label><comments/><create_roles/><default_value/><defaultsort/><delete_roles/><dependent/><dependent_on_field/><display>false</display><dynamic_creation>false</dynamic_creation><dynamic_creation_script/><dynamic_default_value/><dynamic_ref_qual/><element>u_source_instance</element><element_reference>false</element_reference><foreign_database/><formula/><function_definition/><function_field>false</function_field><internal_type display_value="String">string</internal_type><mandatory>false</mandatory><max_length>40</max_length><name>u_imgattachment</name><next_element/><primary>false</primary><read_only>false</read_only><read_roles/><reference/><reference_cascade_rule/><reference_floats>false</reference_floats><reference_key/><reference_qual/><reference_qual_condition/><reference_type/><spell_check>false</spell_check><staged>false</staged><sys_class_name>sys_dictionary</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>27bb9a97c343721068b2f54d0501313a</sys_id><sys_name>source instance</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_dictionary_u_imgattachment_u_source_instance</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:12</sys_updated_on><table_reference>false</table_reference><text_index>false</text_index><unique>false</unique><use_dependent_field>false</use_dependent_field><use_dynamic_default>false</use_dynamic_default><use_reference_qualifier>simple</use_reference_qualifier><virtual>false</virtual><virtual_type>script</virtual_type><widget/><write_roles/><xml_view>false</xml_view></sys_dictionary></record_update>]]></payload>
+<payload_hash>-246306956</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>5153e314c350031068b2f54d0501319e</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754ea0ab0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.source instance</target_name>
+<type>Dictionary</type>
+<update_domain>global</update_domain>
+<update_guid>2fbb9a97fb437210a351cb8dffae6b85</update_guid>
+<update_guid_history>2fbb9a97fb437210a351cb8dffae6b85:-246306956</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_security_acl_9c2bd217c343721068b2f54d05013151</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl"><sys_security_acl action="INSERT_OR_UPDATE"><active>true</active><admin_overrides>true</admin_overrides><advanced>false</advanced><applies_to/><condition/><controlled_by_refs/><decision_type>allow</decision_type><description>Default access control on u_imgattachment</description><local_or_existing>Existing</local_or_existing><name>u_imgattachment</name><operation display_value="create">create</operation><script/><security_attribute/><sys_class_name>sys_security_acl</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:32</sys_created_on><sys_id>9c2bd217c343721068b2f54d05013151</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_security_acl_9c2bd217c343721068b2f54d05013151</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:32</sys_updated_on><type display_value="record">record</type></sys_security_acl></record_update>]]></payload>
+<payload_hash>703779959</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>55536714c350031068b2f54d050131dd</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c2c4f0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>u_imgattachment</target_name>
+<type>Access Control</type>
+<update_domain>global</update_domain>
+<update_guid>542bd2173c437210de896d935b25ff71</update_guid>
+<update_guid_history>542bd2173c437210de896d935b25ff71:703779959</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ws_operation_bcaded5bc387321068b2f54d05013112</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ws_operation"&gt;&lt;sys_ws_operation action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;consumes&gt;application/json,application/xml,text/xml&lt;/consumes&gt;&lt;consumes_customized&gt;false&lt;/consumes_customized&gt;&lt;default_operation_uri/&gt;&lt;enforce_acl/&gt;&lt;http_method&gt;GET&lt;/http_method&gt;&lt;name&gt;Variabledetails&lt;/name&gt;&lt;operation_script&gt;&lt;![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    var ritmNumber = request.queryParams.ritm;
+    var result = {};
+
+    if (!ritmNumber) {
+        response.setStatus(400);
+        result.error = "RITM number is required";
+        return result;
+    }
+
+    // Get RITM record
+    var ritmGR = new GlideRecord('sc_req_item');
+    ritmGR.addQuery('number', ritmNumber);
+    ritmGR.query();
+
+    if (!ritmGR.next()) {
+        response.setStatus(404);
+        result.error = "RITM not found";
+        return result;
+    }
+
+    result.ritm_number = ritmGR.number.toString();
+    result.sys_id = ritmGR.sys_id.toString();
+    result.variables = [];
+
+    // Fetch Variables
+    var varGR = new GlideRecord('sc_item_option_mtom');
+    varGR.addQuery('request_item', ritmGR.sys_id);
+    varGR.query();
+
+    while (varGR.next()) {
+
+        var option = varGR.sc_item_option.getRefRecord();
+        var question = option.item_option_new.getRefRecord();
+
+        var variableObj = {};
+        variableObj.name = question.name.toString();
+        variableObj.label = question.question_text.toString();
+        variableObj.value = option.value.toString();
+
+        result.variables.push(variableObj);
+    }
+
+    return result;
+
+})(request, response);
+]]&gt;&lt;/operation_script&gt;&lt;operation_uri&gt;/api/1774551/ritm_details&lt;/operation_uri&gt;&lt;produces&gt;application/json,application/xml,text/xml&lt;/produces&gt;&lt;produces_customized&gt;false&lt;/produces_customized&gt;&lt;relative_path&gt;/&lt;/relative_path&gt;&lt;request_example/&gt;&lt;requires_acl_authorization&gt;true&lt;/requires_acl_authorization&gt;&lt;requires_authentication&gt;true&lt;/requires_authentication&gt;&lt;requires_snc_internal_role&gt;true&lt;/requires_snc_internal_role&gt;&lt;short_description/&gt;&lt;sys_class_name&gt;sys_ws_operation&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 06:29:09&lt;/sys_created_on&gt;&lt;sys_id&gt;bcaded5bc387321068b2f54d05013112&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_name&gt;Variabledetails&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ws_operation_bcaded5bc387321068b2f54d05013112&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 06:29:09&lt;/sys_updated_on&gt;&lt;web_service_definition display_value="RITM Details"&gt;993d251bc387321068b2f54d050131f0&lt;/web_service_definition&gt;&lt;web_service_version/&gt;&lt;/sys_ws_operation&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;bcaded5bc387321068b2f54d05013112&lt;/id&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 06:29:08&lt;/sys_created_on&gt;&lt;sys_id&gt;1ebd251bc387321068b2f54d050131d2&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 06:29:08&lt;/sys_updated_on&gt;&lt;table&gt;sys_ws_operation&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
+<payload_hash>-70141302</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>55536714c350031068b2f54d050131e2</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c74968cfb0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>Variabledetails</target_name>
+<type>Scripted REST Resource</type>
+<update_domain>global</update_domain>
+<update_guid>5ebde19bf58732100d335df444fe2b90</update_guid>
+<update_guid_history>5ebde19bf58732100d335df444fe2b90:-70141302</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_row_6acb7253c34b721068b2f54d05013144</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_row"><sp_row action="INSERT_OR_UPDATE"><class_name/><order>1</order><semantic_tag/><sp_column/><sp_container display_value="imagefromexternaltools - Container 2">3dcbfe13c34b721068b2f54d05013183</sp_container><sys_class_name>sp_row</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 12:10:13</sys_created_on><sys_id>6acb7253c34b721068b2f54d05013144</sys_id><sys_mod_count>0</sys_mod_count><sys_name>1</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_row_6acb7253c34b721068b2f54d05013144</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 12:10:13</sys_updated_on></sp_row></record_update>]]></payload>
+<payload_hash>-896011540</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>5553e314c350031068b2f54d0501319a</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c75cecfba0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>1</target_name>
+<type>Row</type>
+<update_domain>global</update_domain>
+<update_guid>2ecb72534e4b7210f965d0f0c4b1ad47</update_guid>
+<update_guid_history>2ecb72534e4b7210f965d0f0c4b1ad47:-896011540</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_security_acl_role_642b1617c343721068b2f54d05013116</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role"><sys_security_acl_role action="INSERT_OR_UPDATE"><sys_class_name>sys_security_acl_role</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:32</sys_created_on><sys_id>642b1617c343721068b2f54d05013116</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment.u_imgattachment_user</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_security_acl display_value="u_imgattachment">582bd217c343721068b2f54d050131fc</sys_security_acl><sys_update_name>sys_security_acl_role_642b1617c343721068b2f54d05013116</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:32</sys_updated_on><sys_user_role display_value="u_imgattachment_user" name="u_imgattachment_user">002b1ad3c343721068b2f54d050131fb</sys_user_role></sys_security_acl_role></record_update>]]></payload>
+<payload_hash>-542679528</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>59536714c350031068b2f54d050131de</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c2e170000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>u_imgattachment.u_imgattachment_user</target_name>
+<type>Access Roles</type>
+<update_domain>global</update_domain>
+<update_guid>ac2b1617a4437210c00c2023fbb91e2b</update_guid>
+<update_guid_history>ac2b1617a4437210c00c2023fbb91e2b:-542679528</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_column_6acb7253c34b721068b2f54d05013149</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_column"><sp_column action="INSERT_OR_UPDATE"><class_name/><order>1</order><semantic_tag/><size>12</size><size_lg/><size_sm/><size_xs/><sp_row display_value="1">6acb7253c34b721068b2f54d05013144</sp_row><sys_class_name>sp_column</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 12:10:13</sys_created_on><sys_id>6acb7253c34b721068b2f54d05013149</sys_id><sys_mod_count>0</sys_mod_count><sys_name>1</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_column_6acb7253c34b721068b2f54d05013149</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 12:10:13</sys_updated_on></sp_column></record_update>]]></payload>
+<payload_hash>1762835945</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>5953e314c350031068b2f54d05013196</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c75cecfe00000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>1</target_name>
+<type>Column</type>
+<update_domain>global</update_domain>
+<update_guid>aacb7253de4b721088ce9290b883574c</update_guid>
+<update_guid_history>aacb7253de4b721088ce9290b883574c:1762835945</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_widget_b136b95bc30b321068b2f54d050131ed</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sp_widget"&gt;&lt;sp_widget action="INSERT_OR_UPDATE"&gt;&lt;category&gt;custom&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[api.controller=function($scope, $interval) {
+  /* widget controller */
+
+var c = this;
+c.currentIndex = 0;
+
+$interval(function() {
+c.currentIndex = (c.currentIndex + 1) % c.data.images.length;
+}, 3000);
+
+
+};]]&gt;&lt;/client_script&gt;&lt;controller_as&gt;c&lt;/controller_as&gt;&lt;css&gt;.slider-container {
+position: relative;
+width: 100%;
+height: 400px;
+overflow: hidden;
+border-radius: 8px;
+}
+
+.slide {
+width: 100%;
+height: 100%;
+background-size: cover;
+background-position: center;
+position: absolute;
+transition: opacity 1s ease-in-out;
+}
+
+.banner-overlay {
+position: absolute;
+bottom: 0;
+width: 100%;
+padding: 20px;
+background: linear-gradient(to top, rgba(0,0,0,0.7), rgba(0,0,0,0));
+color: white;
+}
+
+.banner-overlay h2 {
+margin: 0;
+font-size: 28px;
+}
+
+.banner-overlay p {
+margin-top: 8px;
+font-size: 16px;
+}&lt;/css&gt;&lt;data_table&gt;sp_instance&lt;/data_table&gt;&lt;demo_data/&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list/&gt;&lt;has_preview&gt;true&lt;/has_preview&gt;&lt;id/&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link&gt;&lt;![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]&gt;&lt;/link&gt;&lt;name&gt;ImageComeFromExteralTools&lt;/name&gt;&lt;option_schema/&gt;&lt;public&gt;false&lt;/public&gt;&lt;roles/&gt;&lt;script&gt;&lt;![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+	
+
+
+data.title = "Welcome to Service Portal";
+data.description = "Cloudinary multi-image slider integrated.";
+
+data.images = [
+"https://res.cloudinary.com/dagnjk3ge/image/upload/q_auto,f_auto/v1771482059/cld-sample-4.jpg",
+
+"https://res.cloudinary.com/dagnjk3ge/image/upload/q_auto,f_auto/v1771485433/Screenshot_2025-02-28_233747_xt0d3a.png",
+
+"https://res.cloudinary.com/dagnjk3ge/image/upload/q_auto,f_auto/v1771485516/Screenshot_2025-01-03_015818_e8eoni.png"
+
+];
+
+
+})();]]&gt;&lt;/script&gt;&lt;servicenow&gt;false&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 07:07:04&lt;/sys_created_on&gt;&lt;sys_id&gt;b136b95bc30b321068b2f54d050131ed&lt;/sys_id&gt;&lt;sys_mod_count&gt;8&lt;/sys_mod_count&gt;&lt;sys_name&gt;ImageComeFromExteralTools&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_b136b95bc30b321068b2f54d050131ed&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 07:46:16&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;div&gt;
+&lt;!-- your widget template --&gt;
+  
+&lt;div class="slider-container"&gt; 
+ &lt;div class="slide" ng-repeat="img in c.data.images" ng-show="$index === c.currentIndex" ng-style="{'background-image': 'url(' + img + ')'}"&gt;
+&lt;div class="banner-overlay"&gt;
+  &lt;h2&gt;{{c.data.title}}&lt;/h2&gt;
+  &lt;p&gt;{{c.data.description}}&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;/div&gt; 
+ &lt;/div&gt;
+&lt;/div&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;b136b95bc30b321068b2f54d050131ed&lt;/id&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 07:07:03&lt;/sys_created_on&gt;&lt;sys_id&gt;ed663d5bc30b321068b2f54d050131c0&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 07:07:03&lt;/sys_updated_on&gt;&lt;table&gt;sp_widget&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
+<payload_hash>-266778015</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>5953e314c350031068b2f54d0501319b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c74dd28d80000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>ImageComeFromExteralTools</target_name>
+<type>Widget</type>
+<update_domain>global</update_domain>
+<update_guid>0c6fb9dbec8b3210cd33f6addc15f8c9</update_guid>
+<update_guid_history>0c6fb9dbec8b3210cd33f6addc15f8c9:-266778015,ed3f39db368b3210ad85271fbb067682:1457557602,15beb95bc48b3210ab5edf51a2f17442:1551524527,ca88b153524b32109f138bdfcc7efd36:-2116445408,83287d13854b32108d2697afa9aac6d7:1052623861,e3187d134a4b321072434d3e11fe45aa:1317492791,e0f7fddff80b3210c2bbc1cfeaef27ed:-1246448893,b727355f250b321072b1d96e090ac4cf:544134134,7166759b160b3210a120e4c2a5d44db0:-1361600378</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_documentation_u_imgattachment_u_base64_en</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_documentation element="u_base64" label="base64" language="en" table="u_imgattachment"><sys_documentation action="INSERT_OR_UPDATE"><element>u_base64</element><help/><hint/><label>base64</label><language>en</language><name>u_imgattachment</name><plural>base64s</plural><sys_class_name>sys_documentation</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>67bb9a97c343721068b2f54d05013143</sys_id><sys_mod_count>0</sys_mod_count><sys_name>base64</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_documentation_u_imgattachment_u_base64_en</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:12</sys_updated_on><url/><url_target/></sys_documentation></sys_documentation></record_update>]]></payload>
+<payload_hash>-504279597</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>5d536714c350031068b2f54d050131da</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754ea0db0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.base64</target_name>
+<type>Field Label</type>
+<update_domain>global</update_domain>
+<update_guid>6bbb9a97994372101a366d960aba8d8e</update_guid>
+<update_guid_history>6bbb9a97994372101a366d960aba8d8e:-504279597</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_user_role_002b1ad3c343721068b2f54d050131fb</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_user_role"><sys_user_role action="INSERT_OR_UPDATE"><assignable_by/><can_delegate>true</can_delegate><description/><elevated_privilege>false</elevated_privilege><encryption_context/><federated_id/><grantable>true</grantable><includes_roles/><name>u_imgattachment_user</name><scoped_admin>false</scoped_admin><suffix/><sys_class_name>sys_user_role</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:30</sys_created_on><sys_id>002b1ad3c343721068b2f54d050131fb</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment_user</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_user_role_002b1ad3c343721068b2f54d050131fb</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:30</sys_updated_on></sys_user_role></record_update>]]></payload>
+<payload_hash>1285907814</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>5d536714c350031068b2f54d050131df</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c28650000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>u_imgattachment_user</target_name>
+<type>Role</type>
+<update_domain>global</update_domain>
+<update_guid>002bd2177c4372102fdc837ecb558514</update_guid>
+<update_guid_history>002bd2177c4372102fdc837ecb558514:1285907814</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_container_3dcbfe13c34b721068b2f54d05013183</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_container"><sp_container action="INSERT_OR_UPDATE"><background_color/><background_image/><background_style>default</background_style><bootstrap_alt>false</bootstrap_alt><class_name/><container_class_name/><name>imagefromexternaltools - Container 2</name><order>2</order><semantic_tag/><sp_page display_value="imagefromexternaltools">18573d5fc30b321068b2f54d0501317d</sp_page><subheader>false</subheader><sys_class_name>sp_container</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 12:10:11</sys_created_on><sys_id>3dcbfe13c34b721068b2f54d05013183</sys_id><sys_mod_count>0</sys_mod_count><sys_name>imagefromexternaltools - Container 2</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_container_3dcbfe13c34b721068b2f54d05013183</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 12:10:11</sys_updated_on><title/><width>container</width></sp_container></record_update>]]></payload>
+<payload_hash>-658458176</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>5d53e314c350031068b2f54d05013197</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c75cec55b0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imagefromexternaltools - Container 2</target_name>
+<type>Container</type>
+<update_domain>global</update_domain>
+<update_guid>b1cb3253684b721000fde45b8ac08499</update_guid>
+<update_guid_history>b1cb3253684b721000fde45b8ac08499:-658458176</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_dictionary_u_imgattachment_u_attachment_sys_id</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_dictionary action="INSERT_OR_UPDATE" element="u_attachment_sys_id" table="u_imgattachment"><active>true</active><array>false</array><attributes>edge_encryption_enabled=true</attributes><audit>false</audit><calculation/><choice>0</choice><choice_field/><choice_table/><column_label>attachment sys_id</column_label><comments/><create_roles/><default_value/><defaultsort/><delete_roles/><dependent/><dependent_on_field/><display>false</display><dynamic_creation>false</dynamic_creation><dynamic_creation_script/><dynamic_default_value/><dynamic_ref_qual/><element>u_attachment_sys_id</element><element_reference>false</element_reference><foreign_database/><formula/><function_definition/><function_field>false</function_field><internal_type display_value="String">string</internal_type><mandatory>false</mandatory><max_length>40</max_length><name>u_imgattachment</name><next_element/><primary>false</primary><read_only>false</read_only><read_roles/><reference/><reference_cascade_rule/><reference_floats>false</reference_floats><reference_key/><reference_qual/><reference_qual_condition/><reference_type/><spell_check>false</spell_check><staged>false</staged><sys_class_name>sys_dictionary</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>a3bb9a97c343721068b2f54d0501310f</sys_id><sys_name>attachment sys_id</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_dictionary_u_imgattachment_u_attachment_sys_id</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:12</sys_updated_on><table_reference>false</table_reference><text_index>false</text_index><unique>false</unique><use_dependent_field>false</use_dependent_field><use_dynamic_default>false</use_dynamic_default><use_reference_qualifier>simple</use_reference_qualifier><virtual>false</virtual><virtual_type>script</virtual_type><widget/><write_roles/><xml_view>false</xml_view></sys_dictionary></record_update>]]></payload>
+<payload_hash>1760490452</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>5d53e314c350031068b2f54d0501319c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754ea0850000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.attachment sys_id</target_name>
+<type>Dictionary</type>
+<update_domain>global</update_domain>
+<update_guid>afbb9a97b2437210a263a516a38bfa81</update_guid>
+<update_guid_history>afbb9a97b2437210a263a516a38bfa81:1760490452</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_documentation_u_imgattachment_u_content_type_en</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_documentation element="u_content_type" label="content type" language="en" table="u_imgattachment"><sys_documentation action="INSERT_OR_UPDATE"><element>u_content_type</element><help/><hint/><label>content type</label><language>en</language><name>u_imgattachment</name><plural>content types</plural><sys_class_name>sys_documentation</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>a3bb9a97c343721068b2f54d05013149</sys_id><sys_mod_count>0</sys_mod_count><sys_name>content type</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_documentation_u_imgattachment_u_content_type_en</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:12</sys_updated_on><url/><url_target/></sys_documentation></sys_documentation></record_update>]]></payload>
+<payload_hash>355979471</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>91536714c350031068b2f54d050131db</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754ea0cc0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.content type</target_name>
+<type>Field Label</type>
+<update_domain>global</update_domain>
+<update_guid>ebbb9a9755437210a757f6a399fc798b</update_guid>
+<update_guid_history>ebbb9a9755437210a757f6a399fc798b:355979471</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ws_definition_7320d2dbc38f321068b2f54d0501315b</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_definition"><sys_ws_definition action="INSERT_OR_UPDATE"><active>true</active><base_uri>/api/1774551/imageintrigation</base_uri><consumes>application/json,application/xml,text/xml</consumes><consumes_customized>false</consumes_customized><default_version>No active default version</default_version><doc_link/><enforce_acl>3e85460fa31431108029835e26fcda42</enforce_acl><is_versioned>false</is_versioned><name>imageintrigation </name><namespace>1774551</namespace><produces>application/json,application/xml,text/xml</produces><produces_customized>false</produces_customized><service_id>imageintrigation</service_id><short_description/><sys_class_name>sys_ws_definition</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:00:18</sys_created_on><sys_id>7320d2dbc38f321068b2f54d0501315b</sys_id><sys_mod_count>0</sys_mod_count><sys_name>imageintrigation </sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_ws_definition_7320d2dbc38f321068b2f54d0501315b</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:00:18</sys_updated_on></sys_ws_definition></record_update>]]></payload>
+<payload_hash>115444058</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>91536714c350031068b2f54d050131e0</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c7520ed810000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imageintrigation </target_name>
+<type>Scripted REST API</type>
+<update_domain>global</update_domain>
+<update_guid>d450dedbd68f3210b4e5e20e6699a663</update_guid>
+<update_guid_history>d450dedbd68f3210b4e5e20e6699a663:115444058</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_container_83d0129fc38f321068b2f54d050131fc</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_container"><sp_container action="INSERT_OR_UPDATE"><background_color/><background_image/><background_style>default</background_style><bootstrap_alt>false</bootstrap_alt><class_name/><container_class_name/><name>imagewithinstace - Test Page - Container 1</name><order>1</order><semantic_tag/><sp_page display_value="imagewithinstace">47d0129fc38f321068b2f54d050131f7</sp_page><subheader>false</subheader><sys_class_name>sp_container</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:02:40</sys_created_on><sys_id>83d0129fc38f321068b2f54d050131fc</sys_id><sys_mod_count>0</sys_mod_count><sys_name>imagewithinstace - Test Page - Container 1</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_container_83d0129fc38f321068b2f54d050131fc</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:02:40</sys_updated_on><title/><width>container</width></sp_container></record_update>]]></payload>
+<payload_hash>303942052</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>9153e314c350031068b2f54d05013198</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c752319b40000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imagewithinstace - Test Page - Container 1</target_name>
+<type>Container</type>
+<update_domain>global</update_domain>
+<update_guid>03d0129f778f3210cc84b186c6305dff</update_guid>
+<update_guid_history>03d0129f778f3210cc84b186c6305dff:303942052</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_dictionary_u_imgattachment_u_base64</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_dictionary action="INSERT_OR_UPDATE" element="u_base64" table="u_imgattachment"><active>true</active><array>false</array><attributes>edge_encryption_enabled=true</attributes><audit>false</audit><calculation/><choice/><choice_field/><choice_table/><column_label>base64</column_label><comments/><create_roles/><default_value/><defaultsort/><delete_roles/><dependent/><dependent_on_field/><display>false</display><dynamic_creation>false</dynamic_creation><dynamic_creation_script/><dynamic_default_value/><dynamic_ref_qual/><element>u_base64</element><element_reference>false</element_reference><foreign_database/><formula/><function_definition/><function_field>false</function_field><internal_type display_value="String">string</internal_type><mandatory>false</mandatory><max_length>1040</max_length><name>u_imgattachment</name><next_element/><primary>false</primary><read_only>false</read_only><read_roles/><reference/><reference_cascade_rule/><reference_floats>false</reference_floats><reference_key/><reference_qual/><reference_qual_condition/><reference_type/><spell_check>false</spell_check><staged>false</staged><sys_class_name>sys_dictionary</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>63bb9a97c343721068b2f54d05013140</sys_id><sys_name>base64</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_dictionary_u_imgattachment_u_base64</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:36</sys_updated_on><table_reference>false</table_reference><text_index>false</text_index><unique>false</unique><use_dependent_field>false</use_dependent_field><use_dynamic_default>false</use_dynamic_default><use_reference_qualifier>simple</use_reference_qualifier><virtual>false</virtual><virtual_type>script</virtual_type><widget/><write_roles/><xml_view>false</xml_view></sys_dictionary></record_update>]]></payload>
+<payload_hash>920542064</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>9153e314c350031068b2f54d0501319d</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754f00890000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.base64</target_name>
+<type>Dictionary</type>
+<update_domain>global</update_domain>
+<update_guid>e5db52d7b8437210b10726155f77b8e9</update_guid>
+<update_guid_history>e5db52d7b8437210b10726155f77b8e9:920542064,23bb9a9740437210e62b9558a4c9cd7e:1415626054</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_report_ac9ea0f2c34f7a1468b2f54d0501316e</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_report"><sys_report action="INSERT_OR_UPDATE"><active>true</active><additional_groupby/><aggregate>COUNT</aggregate><aggregation_source>no_override</aggregation_source><allow_data_label_overlap>false</allow_data_label_overlap><apply_alias>false</apply_alias><axis_max_color display_value="UI14 Blue Light">b0d449b3d7332100fa6c0c12ce610383</axis_max_color><axis_min_color display_value="White">65b303c7a9fe3dba00629aff95ee3597</axis_min_color><bar_unstack>false</bar_unstack><calendar/><chart_background_color/><chart_border_color/><chart_border_radius>0</chart_border_radius><chart_border_width>1</chart_border_width><chart_height>450</chart_height><chart_size>large</chart_size><chart_subtitle/><chart_subtitle_color/><chart_subtitle_size>14</chart_subtitle_size><chart_subtitle_style>normal</chart_subtitle_style><chart_title/><chart_title_color display_value="Black">65b30218a9fe3dba0120df8611520d97</chart_title_color><chart_title_size>16</chart_title_size><chart_title_style>normal</chart_title_style><chart_title_x_position>0</chart_title_x_position><chart_title_y_position>0</chart_title_y_position><chart_width>600</chart_width><color display_value="Default Color">de699435d7033100b4964ebfae610331</color><color_palette display_value="Default UI14">aa558ab3d7732100fa6c0c12ce610377</color_palette><colors/><column/><compute_percent>aggregate</compute_percent><content/><created_by_user display_value="System Administrator">6816f79cc0a8016401c5a33be04be441</created_by_user><custom_chart_size>false</custom_chart_size><custom_chart_title_position>false</custom_chart_title_position><custom_config>{"transforms":[{"transform":{"transform":"Reference","name":"chart-subjects"}}]}</custom_config><decimal_precision>2</decimal_precision><description/><direction>minimize</direction><display_column_lines>false</display_column_lines><display_grid>false</display_grid><display_row_lines>false</display_row_lines><donut_width_percent>30</donut_width_percent><end_time/><exp_report_attrs>true</exp_report_attrs><field>category</field><field_list>add_info,category,instance,is_hidden,metric,metric_definition,metric_type_group,reference_id,source_id,source_table</field_list><filter table="asmt_assessment_instance_question">category=a34e9c36c34b7a1468b2f54d05013122^value&gt;6<item display_table="asmt_metric_category" display_value="Health Survey" endquery="false" field="category" goto="false" newquery="false" operator="=" or="false" value="a34e9c36c34b7a1468b2f54d05013122"/><item endquery="false" field="value" goto="false" newquery="false" operator="&gt;" or="false" value="6"/></filter><formatting_configuration>{"table":"incident","stringFormattingProperties":{},"durationFormattingProperties":{},"dateFormattingProperties":{},"numberFormattingProperties":{}}</formatting_configuration><from/><funnel_neck_percent>30</funnel_neck_percent><gauge_autoscale>true</gauge_autoscale><group/><import_table/><interval>year</interval><is_published>false</is_published><is_real_time>false</is_real_time><is_scheduled>false</is_scheduled><legend_align_columns>true</legend_align_columns><legend_background_color/><legend_border_color/><legend_border_radius>0</legend_border_radius><legend_border_width>1</legend_border_width><legend_horizontal_alignment>center</legend_horizontal_alignment><legend_items_left_align>false</legend_items_left_align><legend_vertical_alignment>bottom</legend_vertical_alignment><list_ui_view/><location_field/><lower_limit/><map display_value="World">93b8a3a2d7101200bd4a4ebfae61033a</map><map_source/><no_bulk_migration>true</no_bulk_migration><orderby_list/><other_threshold>-2</other_threshold><others>true</others><page_hdrftr/><pivot_expanded>true</pivot_expanded><report_drilldown/><report_source/><roles/><row/><sc_groupby_item_id/><sc_groupby_variable_id/><sc_stackby_item_id/><sc_stackby_variable_id/><score_color display_value="Black">65b30218a9fe3dba0120df8611520d97</score_color><series_name_text/><set_color>one_color</set_color><show_chart_border>false</show_chart_border><show_chart_data_label>false</show_chart_data_label><show_chart_title>report</show_chart_title><show_chart_total>false</show_chart_total><show_data_label_position_middle>false</show_data_label_position_middle><show_empty>false</show_empty><show_geographical_label>false</show_geographical_label><show_legend>true</show_legend><show_legend_border>false</show_legend_border><show_marker>false</show_marker><show_zero>false</show_zero><source_type>table</source_type><start_time/><style_config/><sumfield/><sys_class_name>sys_report</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-17 12:36:15</sys_created_on><sys_id>ac9ea0f2c34f7a1468b2f54d0501316e</sys_id><sys_mod_count>2</sys_mod_count><sys_name>HELTH REPORT</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_report_ac9ea0f2c34f7a1468b2f54d0501316e</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-18 07:09:20</sys_updated_on><table>asmt_assessment_instance_question</table><title>HELTH REPORT</title><title_horizontal_alignment>center</title_horizontal_alignment><title_vertical_alignment>top</title_vertical_alignment><to/><trend_field/><type>bar</type><upper_limit/><use_color_heatmap>false</use_color_heatmap><use_null_in_trend>false</use_null_in_trend><user>6816f79cc0a8016401c5a33be04be441</user><x_axis_allow_decimals>true</x_axis_allow_decimals><x_axis_display_grid>false</x_axis_display_grid><x_axis_grid_color display_value="LightGrey">65b30308a9fe3dba01ebaa03e87e7cd3</x_axis_grid_color><x_axis_grid_dotted>false</x_axis_grid_dotted><x_axis_grid_width>1</x_axis_grid_width><x_axis_label_bold>false</x_axis_label_bold><x_axis_label_color/><x_axis_label_size>11</x_axis_label_size><x_axis_label_tilt>0</x_axis_label_tilt><x_axis_opposite>false</x_axis_opposite><x_axis_title/><x_axis_title_bold>true</x_axis_title_bold><x_axis_title_color display_value="Black">65b30218a9fe3dba0120df8611520d97</x_axis_title_color><x_axis_title_size>12</x_axis_title_size><y_axis_allow_decimals>true</y_axis_allow_decimals><y_axis_display_grid>true</y_axis_display_grid><y_axis_from/><y_axis_grid_color display_value="LightGrey">65b30308a9fe3dba01ebaa03e87e7cd3</y_axis_grid_color><y_axis_grid_dotted>false</y_axis_grid_dotted><y_axis_grid_width>1</y_axis_grid_width><y_axis_label_bold>false</y_axis_label_bold><y_axis_label_color/><y_axis_label_size>11</y_axis_label_size><y_axis_label_tilt>0</y_axis_label_tilt><y_axis_opposite>false</y_axis_opposite><y_axis_title/><y_axis_title_bold>true</y_axis_title_bold><y_axis_title_color display_value="Black">65b30218a9fe3dba0120df8611520d97</y_axis_title_color><y_axis_title_size>12</y_axis_title_size><y_axis_to/></sys_report></record_update>]]></payload>
+<payload_hash>2019137739</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>95536714c350031068b2f54d050131dc</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c6f94fb020000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>asmt_assessment_instance_question</table>
+<target_name>HELTH REPORT</target_name>
+<type>Report</type>
+<update_domain>global</update_domain>
+<update_guid>1d5d60cbddc77e146497ea77405bf4ef</update_guid>
+<update_guid_history>1d5d60cbddc77e146497ea77405bf4ef:2019137739,959ee0f2ea4f7a14a9f3a8f7584443d9:779319203,249ea0f2984f7a141c3d740fc389ecac:-1231929784</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ws_operation_224cde1bc343721068b2f54d050131a9</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ws_operation"&gt;&lt;sys_ws_operation action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;consumes&gt;application/json,application/xml,text/xml&lt;/consumes&gt;&lt;consumes_customized&gt;false&lt;/consumes_customized&gt;&lt;default_operation_uri/&gt;&lt;enforce_acl/&gt;&lt;http_method&gt;POST&lt;/http_method&gt;&lt;name&gt;imageres&lt;/name&gt;&lt;operation_script&gt;&lt;![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    // implement resource here
+
+    var body = request.body.data;
+
+    if (!body || !body.base64 || !body.file_name) {
+        response.setStatus(400);
+        return { status: "failed", message: "Missing base64 or file_name" };
+    }
+
+    var gr = new GlideRecord("u_imgattachment");
+    gr.initialize();
+    gr.u_name = body.file_name;
+    gr.u_content_type = body.content_type;
+    gr.u_base64 = body.base64;
+    gr.u_attachment_sys_id = body.attachment_sys_id;
+    gr.u_source_instance = body.source_instance;
+    gr.insert();
+
+    return { status: "success", message: "Image stored in Instance B" };
+
+})(request, response);]]&gt;&lt;/operation_script&gt;&lt;operation_uri&gt;/api/1774551/recive_image/insert&lt;/operation_uri&gt;&lt;produces&gt;application/json,application/xml,text/xml&lt;/produces&gt;&lt;produces_customized&gt;false&lt;/produces_customized&gt;&lt;relative_path&gt;/insert&lt;/relative_path&gt;&lt;request_example/&gt;&lt;requires_acl_authorization&gt;true&lt;/requires_acl_authorization&gt;&lt;requires_authentication&gt;true&lt;/requires_authentication&gt;&lt;requires_snc_internal_role&gt;true&lt;/requires_snc_internal_role&gt;&lt;short_description/&gt;&lt;sys_class_name&gt;sys_ws_operation&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 09:53:16&lt;/sys_created_on&gt;&lt;sys_id&gt;224cde1bc343721068b2f54d050131a9&lt;/sys_id&gt;&lt;sys_mod_count&gt;1&lt;/sys_mod_count&gt;&lt;sys_name&gt;imageres&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ws_operation_224cde1bc343721068b2f54d050131a9&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 10:06:07&lt;/sys_updated_on&gt;&lt;web_service_definition display_value="recive image "&gt;f32c5a1bc343721068b2f54d05013161&lt;/web_service_definition&gt;&lt;web_service_version/&gt;&lt;/sys_ws_operation&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;224cde1bc343721068b2f54d050131a9&lt;/id&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 09:53:16&lt;/sys_created_on&gt;&lt;sys_id&gt;547c525bc343721068b2f54d0501315e&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 09:53:16&lt;/sys_updated_on&gt;&lt;table&gt;sys_ws_operation&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
+<payload_hash>343348414</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>95536714c350031068b2f54d050131e1</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c755d32060000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imageres</target_name>
+<type>Scripted REST Resource</type>
+<update_domain>global</update_domain>
+<update_guid>346f5657338372108a13b81de6573e08</update_guid>
+<update_guid_history>346f5657338372108a13b81de6573e08:343348414,147c5a5b5a437210b8188032bcd11875:-176751959</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_instance_e1b771dfc30b321068b2f54d05013126</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sp_instance"&gt;&lt;sp_instance action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;advanced_placeholder_dimensions&gt;false&lt;/advanced_placeholder_dimensions&gt;&lt;async_load&gt;false&lt;/async_load&gt;&lt;async_load_device_type&gt;desktop,tablet,mobile&lt;/async_load_device_type&gt;&lt;async_load_trigger&gt;viewport&lt;/async_load_trigger&gt;&lt;class_name/&gt;&lt;color&gt;default&lt;/color&gt;&lt;css/&gt;&lt;glyph/&gt;&lt;id/&gt;&lt;order&gt;1&lt;/order&gt;&lt;placeholder_dimensions&gt;{&amp;#13;	"mobile": {&amp;#13;		"height": "250px",&amp;#13;		"width": "100%"&amp;#13;	},&amp;#13;	"desktop": {&amp;#13;		"height": "250px",&amp;#13;		"width": "100%"&amp;#13;	},&amp;#13;	"tablet": {&amp;#13;		"height": "250px",&amp;#13;		"width": "100%"&amp;#13;	}&amp;#13;}&lt;/placeholder_dimensions&gt;&lt;placeholder_dimensions_script&gt;&lt;![CDATA[function evaluateConfig(options) { return {	"mobile": {		"height": "250px",		"width": "100%"	},	"desktop": {		"height": "250px",		"width": "100%"	},	"tablet": {		"height": "250px",		"width": "100%"	}}; }]]&gt;&lt;/placeholder_dimensions_script&gt;&lt;placeholder_template&gt;&amp;lt;!-- 
+	AngularJS template with configurable options.
+	Use the `options` object to control dynamic behavior.
+	Example: Display an element when max row count is 10:
+	&amp;lt;div ng-if="options.maxRowCount === 10"&amp;gt;&amp;lt;/div&amp;gt;
+	The `skeleton-container` class is used for loading placeholders.
+--&amp;gt;
+	&amp;lt;div class="skeleton-container"&amp;gt;
+	&amp;lt;!-- Header Skeleton --&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-header"&amp;gt;&amp;lt;/div&amp;gt;
+	&amp;lt;!-- Body Skeleton --&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-line"&amp;gt;&amp;lt;/div&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-line small"&amp;gt;&amp;lt;/div&amp;gt;
+	&amp;lt;div class="skeleton-box skeleton-line medium"&amp;gt;&amp;lt;/div&amp;gt;
+&amp;lt;/div&amp;gt;&lt;/placeholder_template&gt;&lt;preserve_placeholder_size&gt;false&lt;/preserve_placeholder_size&gt;&lt;roles/&gt;&lt;short_description/&gt;&lt;size&gt;md&lt;/size&gt;&lt;sp_column display_value="1"&gt;e1a731dfc30b321068b2f54d0501317d&lt;/sp_column&gt;&lt;sp_widget display_value="ImageComeFromExteralTools"&gt;b136b95bc30b321068b2f54d050131ed&lt;/sp_widget&gt;&lt;sys_class_name&gt;sp_instance&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 07:12:47&lt;/sys_created_on&gt;&lt;sys_id&gt;e1b771dfc30b321068b2f54d05013126&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_name/&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_instance_e1b771dfc30b321068b2f54d05013126&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 07:12:47&lt;/sys_updated_on&gt;&lt;title/&gt;&lt;url/&gt;&lt;widget_parameters/&gt;&lt;/sp_instance&gt;&lt;sys_translated_text action="delete_multiple" query="documentkey=e1b771dfc30b321068b2f54d05013126"/&gt;&lt;/record_update&gt;</payload>
+<payload_hash>1441499620</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>9553e314c350031068b2f54d05013199</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c74be80070000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name/>
+<type>Instance</type>
+<update_domain>global</update_domain>
+<update_guid>6db771dfb40b32106360561958d3e42b</update_guid>
+<update_guid_history>6db771dfb40b32106360561958d3e42b:1441499620</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_security_acl_ec2b1617c343721068b2f54d0501312d</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl"><sys_security_acl action="INSERT_OR_UPDATE"><active>true</active><admin_overrides>true</admin_overrides><advanced>false</advanced><applies_to/><condition/><controlled_by_refs/><decision_type>allow</decision_type><description>Default access control on u_imgattachment</description><local_or_existing>Existing</local_or_existing><name>u_imgattachment</name><operation display_value="delete">delete</operation><script/><security_attribute/><sys_class_name>sys_security_acl</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:32</sys_created_on><sys_id>ec2b1617c343721068b2f54d0501312d</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_security_acl_ec2b1617c343721068b2f54d0501312d</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:32</sys_updated_on><type display_value="record">record</type></sys_security_acl></record_update>]]></payload>
+<payload_hash>1446064857</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>99536714c350031068b2f54d050131dd</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c2e660000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>u_imgattachment</target_name>
+<type>Access Control</type>
+<update_domain>global</update_domain>
+<update_guid>6c2b16177543721020afbf0ffcbeef45</update_guid>
+<update_guid_history>6c2b16177543721020afbf0ffcbeef45:1446064857</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>asmt_metric_48789d1bc343321068b2f54d050131fe</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update sys_domain="global" table="asmt_metric"&gt;&lt;asmt_metric action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;add_info_label&gt;Additional Information&lt;/add_info_label&gt;&lt;allow_add_info&gt;false&lt;/allow_add_info&gt;&lt;allow_not_applicable&gt;true&lt;/allow_not_applicable&gt;&lt;auto_gen&gt;false&lt;/auto_gen&gt;&lt;category display_value="Employee health survey"&gt;1ee7350fc34bbe1468b2f54d05013183&lt;/category&gt;&lt;cond_question&gt;always&lt;/cond_question&gt;&lt;condition/&gt;&lt;context/&gt;&lt;correct_answer/&gt;&lt;correct_answer_checkbox/&gt;&lt;correct_answer_choice/&gt;&lt;correct_answer_template/&gt;&lt;correct_answer_yesno/&gt;&lt;custom_metric/&gt;&lt;datatype&gt;string&lt;/datatype&gt;&lt;default_value_field/&gt;&lt;depends_on/&gt;&lt;description/&gt;&lt;details/&gt;&lt;displayed_when/&gt;&lt;displayed_when_checkbox/&gt;&lt;displayed_when_template/&gt;&lt;displayed_when_yesno/&gt;&lt;duration/&gt;&lt;field_validation display_value="Email"&gt;33513d135b1200101f254d3ba881c7d5&lt;/field_validation&gt;&lt;hide_label&gt;false&lt;/hide_label&gt;&lt;mandatory&gt;false&lt;/mandatory&gt;&lt;max&gt;10&lt;/max&gt;&lt;max_weight/&gt;&lt;maximum_normalization_input&gt;false&lt;/maximum_normalization_input&gt;&lt;method&gt;assessment&lt;/method&gt;&lt;metric_type display_value="Employee health survey"&gt;16e7f10fc34bbe1468b2f54d0501319c&lt;/metric_type&gt;&lt;min&gt;1&lt;/min&gt;&lt;name&gt;New String&lt;/name&gt;&lt;order&gt;200&lt;/order&gt;&lt;plugin/&gt;&lt;question&gt;Email ${param}&lt;/question&gt;&lt;randomize_answers&gt;false&lt;/randomize_answers&gt;&lt;read_only&gt;false&lt;/read_only&gt;&lt;reference_table/&gt;&lt;scale&gt;low&lt;/scale&gt;&lt;scored&gt;false&lt;/scored&gt;&lt;script&gt;&lt;![CDATA[// The following variables are available:  // - primary: contains the sys_id of the assessable object to be evaluated  // - string_result: the script sets the display string value for this metric to this variable  // - actual_result: the script sets the actual value for this metric to this variable  // - scaled_result: the script sets the scaled value (used in calculations) for this metric to this variable  //  // For example: // var gr = new GlideRecord('cmdb_ci'); // gr.addQuery('manufacturer', primary); // gr.query(); // actual_result = gr.getRowCount(); // string_result = actual_result + ''; // if (actual_result &amp;gt; 100) scaled_result = 5; // else scaled_result = 1;]]&gt;&lt;/script&gt;&lt;source_field&gt;email&lt;/source_field&gt;&lt;string_option&gt;short&lt;/string_option&gt;&lt;sys_class_name&gt;asmt_metric&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 04:56:09&lt;/sys_created_on&gt;&lt;sys_domain&gt;global&lt;/sys_domain&gt;&lt;sys_domain_path&gt;/&lt;/sys_domain_path&gt;&lt;sys_id&gt;48789d1bc343321068b2f54d050131fe&lt;/sys_id&gt;&lt;sys_mod_count&gt;2&lt;/sys_mod_count&gt;&lt;sys_name&gt;New String&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;asmt_metric_48789d1bc343321068b2f54d050131fe&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 05:21:12&lt;/sys_updated_on&gt;&lt;template/&gt;&lt;value_parameters/&gt;&lt;weight&gt;10&lt;/weight&gt;&lt;/asmt_metric&gt;&lt;sys_translated_text action="delete_multiple" query="documentkey=48789d1bc343321068b2f54d050131fe"/&gt;&lt;/record_update&gt;</payload>
+<payload_hash>-355889208</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>9953e314c350031068b2f54d05013194</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c745855e70000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>New String</target_name>
+<type>Assessment Metric</type>
+<update_domain>global</update_domain>
+<update_guid>8f2e911350c33210f48b85c1bdb1d0b1</update_guid>
+<update_guid_history>8f2e911350c33210f48b85c1bdb1d0b1:-355889208,c478dd1bcb4332101884bcf0a27fe61e:1004042071,0c78dd1b9f433210f8f5a4b46ec14b0c:-1478386148</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>asmt_metric_96e7350fc34bbe1468b2f54d0501318c</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update sys_domain="global" table="asmt_metric"&gt;&lt;asmt_metric action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;add_info_label&gt;Additional Information&lt;/add_info_label&gt;&lt;allow_add_info&gt;false&lt;/allow_add_info&gt;&lt;allow_not_applicable&gt;true&lt;/allow_not_applicable&gt;&lt;auto_gen&gt;false&lt;/auto_gen&gt;&lt;category display_value="Employee health survey"&gt;1ee7350fc34bbe1468b2f54d05013183&lt;/category&gt;&lt;cond_question&gt;always&lt;/cond_question&gt;&lt;condition/&gt;&lt;context/&gt;&lt;correct_answer/&gt;&lt;correct_answer_checkbox/&gt;&lt;correct_answer_choice/&gt;&lt;correct_answer_template/&gt;&lt;correct_answer_yesno/&gt;&lt;custom_metric/&gt;&lt;datatype&gt;reference&lt;/datatype&gt;&lt;default_value_field/&gt;&lt;depends_on/&gt;&lt;description/&gt;&lt;details/&gt;&lt;displayed_when/&gt;&lt;displayed_when_checkbox/&gt;&lt;displayed_when_template/&gt;&lt;displayed_when_yesno/&gt;&lt;duration/&gt;&lt;field_validation/&gt;&lt;hide_label&gt;false&lt;/hide_label&gt;&lt;mandatory&gt;false&lt;/mandatory&gt;&lt;max&gt;10&lt;/max&gt;&lt;max_weight/&gt;&lt;maximum_normalization_input&gt;false&lt;/maximum_normalization_input&gt;&lt;method&gt;assessment&lt;/method&gt;&lt;metric_type display_value="Employee health survey"&gt;16e7f10fc34bbe1468b2f54d0501319c&lt;/metric_type&gt;&lt;min&gt;1&lt;/min&gt;&lt;name&gt;New Reference&lt;/name&gt;&lt;order&gt;100&lt;/order&gt;&lt;plugin/&gt;&lt;question&gt;Your Name&lt;/question&gt;&lt;randomize_answers&gt;false&lt;/randomize_answers&gt;&lt;read_only&gt;false&lt;/read_only&gt;&lt;reference_table&gt;sys_user&lt;/reference_table&gt;&lt;scale&gt;low&lt;/scale&gt;&lt;scored&gt;false&lt;/scored&gt;&lt;script&gt;&lt;![CDATA[// The following variables are available:  // - primary: contains the sys_id of the assessable object to be evaluated  // - string_result: the script sets the display string value for this metric to this variable  // - actual_result: the script sets the actual value for this metric to this variable  // - scaled_result: the script sets the scaled value (used in calculations) for this metric to this variable  //  // For example: // var gr = new GlideRecord('cmdb_ci'); // gr.addQuery('manufacturer', primary); // gr.query(); // actual_result = gr.getRowCount(); // string_result = actual_result + ''; // if (actual_result &amp;gt; 100) scaled_result = 5; // else scaled_result = 1;]]&gt;&lt;/script&gt;&lt;source_field/&gt;&lt;string_option&gt;wide&lt;/string_option&gt;&lt;sys_class_name&gt;asmt_metric&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-18 12:35:10&lt;/sys_created_on&gt;&lt;sys_domain&gt;global&lt;/sys_domain&gt;&lt;sys_domain_path&gt;/&lt;/sys_domain_path&gt;&lt;sys_id&gt;96e7350fc34bbe1468b2f54d0501318c&lt;/sys_id&gt;&lt;sys_mod_count&gt;4&lt;/sys_mod_count&gt;&lt;sys_name&gt;New Reference&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;asmt_metric_96e7350fc34bbe1468b2f54d0501318c&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 05:21:11&lt;/sys_updated_on&gt;&lt;template/&gt;&lt;value_parameters/&gt;&lt;weight&gt;10&lt;/weight&gt;&lt;/asmt_metric&gt;&lt;sys_translated_text action="delete_multiple" query="documentkey=96e7350fc34bbe1468b2f54d0501318c"/&gt;&lt;/record_update&gt;</payload>
+<payload_hash>1688077533</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>9953e314c350031068b2f54d05013195</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c745855300000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>New Reference</target_name>
+<type>Assessment Metric</type>
+<update_domain>global</update_domain>
+<update_guid>7a2e9ddb44833210cac8ffcb8b864176</update_guid>
+<update_guid_history>7a2e9ddb44833210cac8ffcb8b864176:1688077533,a518fd0fc44bbe148e72b26190926c52:1688077533,2ee7350f554bbe144158e6222acbde9e:-312010962,12e7350f354bbe14b8f22573c194a199:-1382425925</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_row_9fd0529fc38f321068b2f54d05013100</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_row"><sp_row action="INSERT_OR_UPDATE"><class_name/><order>1</order><semantic_tag/><sp_column/><sp_container display_value="imagewithinstace - Test Page - Container 1">83d0129fc38f321068b2f54d050131fc</sp_container><sys_class_name>sp_row</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:02:40</sys_created_on><sys_id>9fd0529fc38f321068b2f54d05013100</sys_id><sys_mod_count>0</sys_mod_count><sys_name>1</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_row_9fd0529fc38f321068b2f54d05013100</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:02:40</sys_updated_on></sp_row></record_update>]]></payload>
+<payload_hash>-1109121968</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>9953e314c350031068b2f54d0501319a</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c752319e60000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>1</target_name>
+<type>Row</type>
+<update_domain>global</update_domain>
+<update_guid>5fd0529f018f321043981d5610e00803</update_guid>
+<update_guid_history>5fd0529f018f321043981d5610e00803:-1109121968</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_security_acl_role_e82b1617c343721068b2f54d05013147</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role"><sys_security_acl_role action="INSERT_OR_UPDATE"><sys_class_name>sys_security_acl_role</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:32</sys_created_on><sys_id>e82b1617c343721068b2f54d05013147</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment.u_imgattachment_user</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_security_acl display_value="u_imgattachment">ec2b1617c343721068b2f54d0501312d</sys_security_acl><sys_update_name>sys_security_acl_role_e82b1617c343721068b2f54d05013147</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:32</sys_updated_on><sys_user_role display_value="u_imgattachment_user" name="u_imgattachment_user">002b1ad3c343721068b2f54d050131fb</sys_user_role></sys_security_acl_role></record_update>]]></payload>
+<payload_hash>-2137584591</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>9d536714c350031068b2f54d050131de</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c2ea00000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>u_imgattachment.u_imgattachment_user</target_name>
+<type>Access Roles</type>
+<update_domain>global</update_domain>
+<update_guid>6c2b1617f443721029f9d8ab051feb50</update_guid>
+<update_guid_history>6c2b1617f443721029f9d8ab051feb50:-2137584591</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_column_dbd0529fc38f321068b2f54d05013105</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_column"><sp_column action="INSERT_OR_UPDATE"><class_name/><order>1</order><semantic_tag/><size/><size_lg/><size_sm/><size_xs/><sp_row display_value="1">9fd0529fc38f321068b2f54d05013100</sp_row><sys_class_name>sp_column</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:02:40</sys_created_on><sys_id>dbd0529fc38f321068b2f54d05013105</sys_id><sys_mod_count>0</sys_mod_count><sys_name>1</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_column_dbd0529fc38f321068b2f54d05013105</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:02:40</sys_updated_on></sp_column></record_update>]]></payload>
+<payload_hash>-1800174959</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>9d53e314c350031068b2f54d05013196</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c75231a160000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>1</target_name>
+<type>Column</type>
+<update_domain>global</update_domain>
+<update_guid>9bd0529ff38f32106db6d3f0358dcf08</update_guid>
+<update_guid_history>9bd0529ff38f32106db6d3f0358dcf08:-1800174959</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_widget_e655f65bc3c7721068b2f54d050131f2</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sp_widget"&gt;&lt;sp_widget action="INSERT_OR_UPDATE"&gt;&lt;category&gt;custom&lt;/category&gt;&lt;client_script&gt;&lt;![CDATA[api.controller=function() {
+  /* widget controller */
+  var c = this;
+};]]&gt;&lt;/client_script&gt;&lt;controller_as&gt;c&lt;/controller_as&gt;&lt;css/&gt;&lt;data_table&gt;sp_instance&lt;/data_table&gt;&lt;demo_data/&gt;&lt;description/&gt;&lt;docs/&gt;&lt;field_list/&gt;&lt;has_preview&gt;true&lt;/has_preview&gt;&lt;id/&gt;&lt;internal&gt;false&lt;/internal&gt;&lt;link&gt;&lt;![CDATA[function link(scope, element, attrs, controller) {
+  
+}]]&gt;&lt;/link&gt;&lt;name&gt;attachmentviaapi&lt;/name&gt;&lt;option_schema/&gt;&lt;public&gt;false&lt;/public&gt;&lt;roles/&gt;&lt;script&gt;&lt;![CDATA[(function() {
+  /* populate the 'data' object */
+  /* e.g., data.table = $sp.getValue('table'); */
+
+    data.image = "";
+    data.fileName = "";
+    data.created = "";
+    data.debug = "";
+
+    var instanceA = "https://dev307914.service-now.com"; 
+     
+    var user = "admin";
+    var pass = "z3q@nUyKG0!O";
+
+try {
+
+        //  Get latest image attachment
+        var query1 = "content_typeSTARTSWITHimage^ORDERBYDESCsys_created_on";
+
+        var url1 =
+            instanceA +
+            "/api/now/table/sys_attachment" +
+            "?sysparm_query=" + encodeURIComponent(query1) +
+            "&amp;sysparm_limit=1" +
+            "&amp;sysparm_fields=sys_id,file_name,content_type,sys_created_on";
+
+        var r1 = new sn_ws.RESTMessageV2();
+        r1.setHttpMethod("GET");
+        r1.setEndpoint(url1);
+        r1.setBasicAuth(user, pass);
+        r1.setRequestHeader("Accept", "application/json");
+
+        var res1 = r1.execute();
+
+        data.debug += "LIST STATUS: " + res1.getStatusCode() + "\n";
+
+        if (res1.getStatusCode() != 200)
+            return;
+
+        var obj1 = JSON.parse(res1.getBody());
+
+        if (!obj1.result || obj1.result.length == 0)
+            return;
+
+        var att = obj1.result[0];
+
+        data.fileName = att.file_name + "";
+        data.created = att.sys_created_on + "";
+        var mime = att.content_type || "image/png";
+
+        //  Fetch chunks from sys_attachment_doc
+        var query2 = "sys_attachment=" + att.sys_id + "^ORDERBYposition";
+
+        var url2 =
+            instanceA +
+            "/api/now/table/sys_attachment_doc" +
+            "?sysparm_query=" + encodeURIComponent(query2) +
+            "&amp;sysparm_fields=data" +
+            "&amp;sysparm_limit=1000";
+
+        var r2 = new sn_ws.RESTMessageV2();
+        r2.setHttpMethod("GET");
+        r2.setEndpoint(url2);
+        r2.setBasicAuth(user, pass);
+        r2.setRequestHeader("Accept", "application/json");
+
+        var res2 = r2.execute();
+
+        data.debug += "DOC STATUS: " + res2.getStatusCode() + "\n";
+
+        if (res2.getStatusCode() != 200) {
+            data.debug += "DOC BODY: " + res2.getBody() + "\n";
+            return;
+        }
+
+        var obj2 = JSON.parse(res2.getBody());
+
+        if (!obj2.result || obj2.result.length == 0) {
+            data.debug += "No chunks found in sys_attachment_doc\n";
+            return;
+        }
+
+        // Combine base64 chunks
+        var base64 = "";
+        for (var i = 0; i &lt; obj2.result.length; i++) {
+            base64 += obj2.result[i].data;
+        }
+
+        data.debug += "BASE64 LENGTH: " + base64.length + "\n";
+
+        //  Send image to UI
+        data.image = "data:" + mime + ";base64," + base64;
+
+        data.debug += "IMAGE READY\n";
+
+    } catch (ex) {
+        data.debug += "ERROR: " + ex;
+    }
+
+})();]]&gt;&lt;/script&gt;&lt;servicenow&gt;false&lt;/servicenow&gt;&lt;sys_class_name&gt;sp_widget&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 11:42:36&lt;/sys_created_on&gt;&lt;sys_id&gt;e655f65bc3c7721068b2f54d050131f2&lt;/sys_id&gt;&lt;sys_mod_count&gt;16&lt;/sys_mod_count&gt;&lt;sys_name&gt;attachmentviaapi&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sp_widget_e655f65bc3c7721068b2f54d050131f2&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 12:50:23&lt;/sys_updated_on&gt;&lt;template&gt;&lt;![CDATA[&lt;div&gt;
+&lt;!-- your widget template --&gt;
+  
+  
+&lt;div class="panel panel-default" ng-if="data.image"&gt;
+  &lt;div class="panel-heading"&gt;
+    &lt;b&gt;Latest Image from Instance A&lt;/b&gt;
+  &lt;/div&gt;
+
+  &lt;div class="panel-body text-center"&gt;
+  &lt;img ng-src="{{data.image}}" style="max-width:100%; height:auto;" /&gt;
+
+
+    &lt;small&gt;
+      &lt;b&gt;{{data.fileName}}&lt;/b&gt;&lt;br&gt;
+      Uploaded: {{data.created}}
+    &lt;/small&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div ng-if="!data.image" class="alert alert-info"&gt;
+  No image found in Instance A.
+&lt;/div&gt;
+
+&lt;pre style="white-space: pre-wrap; font-size: 12px;"&gt;
+{{data.debug}}
+&lt;/pre&gt;
+
+
+
+&lt;/div&gt;]]&gt;&lt;/template&gt;&lt;/sp_widget&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;e655f65bc3c7721068b2f54d050131f2&lt;/id&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 11:42:34&lt;/sys_created_on&gt;&lt;sys_id&gt;65757a5bc3c7721068b2f54d050131d0&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 11:42:34&lt;/sys_updated_on&gt;&lt;table&gt;sp_widget&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
+<payload_hash>1720485874</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>9d53e314c350031068b2f54d0501319b</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c75f393470000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>attachmentviaapi</target_name>
+<type>Widget</type>
+<update_domain>global</update_domain>
+<update_guid>76f4c3d33bcb7210ac93310d541d3eff</update_guid>
+<update_guid_history>76f4c3d33bcb7210ac93310d541d3eff:1720485874,05b28b9b3d8b72100e6f6da4afbce16f:2106079668,23928b9bb08b72108e8df9c6a0794305:740912980,f602c7179f8b72109531599e808e7f6b:2106079668,10ec3e176807721027741e5dd5445127:-1343191640,aa9c3a13774b72103a1893cb6b7eba37:-1083923305,277cfad3354b72101b18101c2cb19d1a:2074678316,633cfa930f4b72108ecac217dd9649d7:779373705,477bbedfc90b72109e7c4afa329b4cba:1951516791,daea7e5fa50b7210775cd04aa55314a3:-1666888558,e57a361f260b7210004772b8b17cf029:-864443394,002af65b380b7210793e635ce82dbc7f:-1441475639,a9b9b65be20b7210c43d0eefc0c9fffc:-1959534467,ee99f697c50b7210ea59063b978046c8:-1733160781,0c68fa93c90b7210de7bb4e1f8a0775c:-242121577,c3d7fa93a60b72108b5322d9b076fe08:-1418127789,4e75fe5b09c772106c8ef36841568196:769979985</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ui_section_6c3bd6d3c343721068b2f54d050131c5</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_ui_section caption="" section_id="6c3bd6d3c343721068b2f54d050131c5" sys_domain="global" table="u_imgattachment" version="3" view=""><sys_ui_element action="INSERT_OR_UPDATE"><element>u_name</element><position>0</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:13</sys_created_on><sys_id>efbb9a97c343721068b2f54d05013195</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="u_imgattachment" sys_domain="global" view="Default view">6c3bd6d3c343721068b2f54d050131c5</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:13</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>u_content_type</element><position>1</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:13</sys_created_on><sys_id>63bb9a97c343721068b2f54d05013198</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="u_imgattachment" sys_domain="global" view="Default view">6c3bd6d3c343721068b2f54d050131c5</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:13</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>u_base64</element><position>2</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:13</sys_created_on><sys_id>efbb9a97c343721068b2f54d05013198</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="u_imgattachment" sys_domain="global" view="Default view">6c3bd6d3c343721068b2f54d050131c5</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:13</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>u_attachment_sys_id</element><position>3</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:13</sys_created_on><sys_id>6fbb9a97c343721068b2f54d05013199</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="u_imgattachment" sys_domain="global" view="Default view">6c3bd6d3c343721068b2f54d050131c5</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:13</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_element action="INSERT_OR_UPDATE"><element>u_source_instance</element><position>4</position><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:13</sys_created_on><sys_id>ebbb9a97c343721068b2f54d0501319a</sys_id><sys_mod_count>0</sys_mod_count><sys_ui_formatter/><sys_ui_section caption="NULL" display_value="" name="u_imgattachment" sys_domain="global" view="Default view">6c3bd6d3c343721068b2f54d050131c5</sys_ui_section><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:13</sys_updated_on><sys_user/><type/></sys_ui_element><sys_ui_section action="INSERT_OR_UPDATE"><caption/><header>false</header><name>u_imgattachment</name><roles/><sys_class_name>sys_ui_section</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:50</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>6c3bd6d3c343721068b2f54d050131c5</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment</sys_name><sys_overrides/><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_ui_section_6c3bd6d3c343721068b2f54d050131c5</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:50</sys_updated_on><sys_user/><title>true</title><view display_value="Default view" name="NULL">Default view</view><view_name/></sys_ui_section></sys_ui_section></record_update>]]></payload>
+<payload_hash>-591937377</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d1536714c350031068b2f54d050131df</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754ea1440000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment</target_name>
+<type>Form Layout</type>
+<update_domain>global</update_domain>
+<update_guid>a3bb9a97f54372101f0747f33c3d719e</update_guid>
+<update_guid_history>a3bb9a97f54372101f0747f33c3d719e:-591937377,7c3b5a1754437210cb9df353ade827a0:176106302</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_column_e1a731dfc30b321068b2f54d0501317d</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_column"><sp_column action="INSERT_OR_UPDATE"><class_name/><order>1</order><semantic_tag/><size>12</size><size_lg/><size_sm/><size_xs/><sp_row display_value="1">eda731dfc30b321068b2f54d05013177</sp_row><sys_class_name>sp_column</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 07:12:30</sys_created_on><sys_id>e1a731dfc30b321068b2f54d0501317d</sys_id><sys_mod_count>0</sys_mod_count><sys_name>1</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_column_e1a731dfc30b321068b2f54d0501317d</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 07:12:30</sys_updated_on></sp_column></record_update>]]></payload>
+<payload_hash>-778015677</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d153e314c350031068b2f54d05013197</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c74be3e780000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>1</target_name>
+<type>Column</type>
+<update_domain>global</update_domain>
+<update_guid>25a771dff80b3210839a9f135d3a2f22</update_guid>
+<update_guid_history>25a771dff80b3210839a9f135d3a2f22:-778015677</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_db_object_d4fa96d3c343721068b2f54d05013175</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_db_object"><sys_db_object action="INSERT_OR_UPDATE"><access>public</access><actions_access>false</actions_access><alter_access>false</alter_access><caller_access/><client_scripts_access>false</client_scripts_access><configuration_access>false</configuration_access><create_access>false</create_access><create_access_controls>true</create_access_controls><delete_access>false</delete_access><filter_extension/><is_df_table>false</is_df_table><is_extendable>false</is_extendable><label>Imgattachment</label><live_feed_enabled>false</live_feed_enabled><name>u_imgattachment</name><number_ref/><provider_class/><read_access>true</read_access><scriptable_table>false</scriptable_table><super_class/><sys_class_name>sys_db_object</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:31</sys_created_on><sys_id>d4fa96d3c343721068b2f54d05013175</sys_id><sys_mod_count>0</sys_mod_count><sys_name>Imgattachment</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_db_object_d4fa96d3c343721068b2f54d05013175</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:31</sys_updated_on><update_access>false</update_access><user_role display_value="u_imgattachment_user" name="u_imgattachment_user">002b1ad3c343721068b2f54d050131fb</user_role><ws_access>true</ws_access></sys_db_object></record_update>]]></payload>
+<payload_hash>-56577777</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d153e314c350031068b2f54d0501319c</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c34c90000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment</target_name>
+<type>Table</type>
+<update_domain>global</update_domain>
+<update_guid>782b1617b74372104b46892a051b03f3</update_guid>
+<update_guid_history>782b1617b74372104b46892a051b03f3:-56577777</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_documentation_u_imgattachment_u_name_en</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_documentation element="u_name" label="name" language="en" table="u_imgattachment"><sys_documentation action="INSERT_OR_UPDATE"><element>u_name</element><help/><hint/><label>name</label><language>en</language><name>u_imgattachment</name><plural>names</plural><sys_class_name>sys_documentation</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>efbb9a97c343721068b2f54d0501314e</sys_id><sys_mod_count>0</sys_mod_count><sys_name>name</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_documentation_u_imgattachment_u_name_en</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:12</sys_updated_on><url/><url_target/></sys_documentation></sys_documentation></record_update>]]></payload>
+<payload_hash>1519484699</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d5536714c350031068b2f54d050131db</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754ea0ba0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.name</target_name>
+<type>Field Label</type>
+<update_domain>global</update_domain>
+<update_guid>6fbb9a97454372109676dacae617e188</update_guid>
+<update_guid_history>6fbb9a97454372109676dacae617e188:1519484699</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ws_definition_993d251bc387321068b2f54d050131f0</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_ws_definition"><sys_ws_definition action="INSERT_OR_UPDATE"><active>true</active><base_uri>/api/1774551/ritm_details</base_uri><consumes>application/json,application/xml,text/xml</consumes><consumes_customized>false</consumes_customized><default_version>No active default version</default_version><doc_link/><enforce_acl>3e85460fa31431108029835e26fcda42</enforce_acl><is_versioned>false</is_versioned><name>RITM Details</name><namespace>1774551</namespace><produces>application/json,application/xml,text/xml</produces><produces_customized>false</produces_customized><service_id>ritm_details</service_id><short_description/><sys_class_name>sys_ws_definition</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 06:27:49</sys_created_on><sys_id>993d251bc387321068b2f54d050131f0</sys_id><sys_mod_count>0</sys_mod_count><sys_name>RITM Details</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_ws_definition_993d251bc387321068b2f54d050131f0</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 06:27:49</sys_updated_on></sys_ws_definition></record_update>]]></payload>
+<payload_hash>2008280382</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d5536714c350031068b2f54d050131e0</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c7495558e0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>RITM Details</target_name>
+<type>Scripted REST API</type>
+<update_domain>global</update_domain>
+<update_guid>fe6d615baf873210a70209f77b08c366</update_guid>
+<update_guid_history>fe6d615baf873210a70209f77b08c366:2008280382</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_container_eca7bd9fc30b321068b2f54d050131d2</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_container"><sp_container action="INSERT_OR_UPDATE"><background_color/><background_image/><background_style>default</background_style><bootstrap_alt>false</bootstrap_alt><class_name/><container_class_name/><name>imagefromexternaltools - Container 1</name><order>1</order><semantic_tag/><sp_page display_value="imagefromexternaltools">18573d5fc30b321068b2f54d0501317d</sp_page><subheader>false</subheader><sys_class_name>sp_container</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 07:12:27</sys_created_on><sys_id>eca7bd9fc30b321068b2f54d050131d2</sys_id><sys_mod_count>0</sys_mod_count><sys_name>imagefromexternaltools - Container 1</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_container_eca7bd9fc30b321068b2f54d050131d2</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 07:12:27</sys_updated_on><title/><width>container</width></sp_container></record_update>]]></payload>
+<payload_hash>632221249</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d553e314c350031068b2f54d05013198</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c74be31990000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imagefromexternaltools - Container 1</target_name>
+<type>Container</type>
+<update_domain>global</update_domain>
+<update_guid>24a7bd9ff00b3210936031c6ed1226d5</update_guid>
+<update_guid_history>24a7bd9ff00b3210936031c6ed1226d5:632221249</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_dictionary_u_imgattachment_u_content_type</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update><sys_dictionary action="INSERT_OR_UPDATE" element="u_content_type" table="u_imgattachment"><active>true</active><array>false</array><attributes>edge_encryption_enabled=true</attributes><audit>false</audit><calculation/><choice>0</choice><choice_field/><choice_table/><column_label>content type</column_label><comments/><create_roles/><default_value/><defaultsort/><delete_roles/><dependent/><dependent_on_field/><display>false</display><dynamic_creation>false</dynamic_creation><dynamic_creation_script/><dynamic_default_value/><dynamic_ref_qual/><element>u_content_type</element><element_reference>false</element_reference><foreign_database/><formula/><function_definition/><function_field>false</function_field><internal_type display_value="String">string</internal_type><mandatory>false</mandatory><max_length>40</max_length><name>u_imgattachment</name><next_element/><primary>false</primary><read_only>false</read_only><read_roles/><reference/><reference_cascade_rule/><reference_floats>false</reference_floats><reference_key/><reference_qual/><reference_qual_condition/><reference_type/><spell_check>false</spell_check><staged>false</staged><sys_class_name>sys_dictionary</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:50:12</sys_created_on><sys_id>afbb9a97c343721068b2f54d05013145</sys_id><sys_name>content type</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_dictionary_u_imgattachment_u_content_type</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:50:12</sys_updated_on><table_reference>false</table_reference><text_index>false</text_index><unique>false</unique><use_dependent_field>false</use_dependent_field><use_dynamic_default>false</use_dynamic_default><use_reference_qualifier>simple</use_reference_qualifier><virtual>false</virtual><virtual_type>script</virtual_type><widget/><write_roles/><xml_view>false</xml_view></sys_dictionary></record_update>]]></payload>
+<payload_hash>-553982198</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d553e314c350031068b2f54d0501319d</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754ea02c0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>Imgattachment.content type</target_name>
+<type>Dictionary</type>
+<update_domain>global</update_domain>
+<update_guid>a3bb9a9796437210ea8cf118f49e517a</update_guid>
+<update_guid_history>a3bb9a9796437210ea8cf118f49e517a:-553982198</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_security_acl_582bd217c343721068b2f54d05013180</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl"><sys_security_acl action="INSERT_OR_UPDATE"><active>true</active><admin_overrides>true</admin_overrides><advanced>false</advanced><applies_to/><condition/><controlled_by_refs/><decision_type>allow</decision_type><description>Default access control on u_imgattachment</description><local_or_existing>Existing</local_or_existing><name>u_imgattachment</name><operation display_value="read">read</operation><script/><security_attribute/><sys_class_name>sys_security_acl</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:32</sys_created_on><sys_id>582bd217c343721068b2f54d05013180</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sys_security_acl_582bd217c343721068b2f54d05013180</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:32</sys_updated_on><type display_value="record">record</type></sys_security_acl></record_update>]]></payload>
+<payload_hash>-230472509</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d9536714c350031068b2f54d050131dc</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c2d350000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>u_imgattachment</target_name>
+<type>Access Control</type>
+<update_domain>global</update_domain>
+<update_guid>d02bd21796437210f0317cd792f1eaca</update_guid>
+<update_guid_history>d02bd21796437210f0317cd792f1eaca:-230472509</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_ws_operation_aa50521fc38f321068b2f54d0501310a</name>
+<payload>&lt;?xml version="1.0" encoding="UTF-8"?&gt;&lt;record_update table="sys_ws_operation"&gt;&lt;sys_ws_operation action="INSERT_OR_UPDATE"&gt;&lt;active&gt;true&lt;/active&gt;&lt;consumes&gt;application/json,application/xml,text/xml&lt;/consumes&gt;&lt;consumes_customized&gt;false&lt;/consumes_customized&gt;&lt;default_operation_uri/&gt;&lt;enforce_acl/&gt;&lt;http_method&gt;GET&lt;/http_method&gt;&lt;name&gt;imagedetails&lt;/name&gt;&lt;operation_script&gt;&lt;![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
+
+    // implement resource here
+
+
+var body = request.body.data;
+
+var bytes = GlideStringUtil.base64DecodeAsBytes(body.image_data);
+
+var rec = new GlideRecord('u_image');
+rec.initialize();
+rec.name = body.file_name;
+var id = rec.insert();
+
+var sa = new GlideSysAttachment();
+sa.write(rec, body.file_name, body.content_type, bytes);
+
+response.setStatus(200);
+
+
+})(request, response);
+]]&gt;&lt;/operation_script&gt;&lt;operation_uri&gt;/api/1774551/imageintrigation&lt;/operation_uri&gt;&lt;produces&gt;application/json,application/xml,text/xml&lt;/produces&gt;&lt;produces_customized&gt;false&lt;/produces_customized&gt;&lt;relative_path&gt;/&lt;/relative_path&gt;&lt;request_example/&gt;&lt;requires_acl_authorization&gt;true&lt;/requires_acl_authorization&gt;&lt;requires_authentication&gt;true&lt;/requires_authentication&gt;&lt;requires_snc_internal_role&gt;true&lt;/requires_snc_internal_role&gt;&lt;short_description/&gt;&lt;sys_class_name&gt;sys_ws_operation&lt;/sys_class_name&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 09:01:20&lt;/sys_created_on&gt;&lt;sys_id&gt;aa50521fc38f321068b2f54d0501310a&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_name&gt;imagedetails&lt;/sys_name&gt;&lt;sys_package display_value="Global" source="global"&gt;global&lt;/sys_package&gt;&lt;sys_policy/&gt;&lt;sys_scope display_value="Global"&gt;global&lt;/sys_scope&gt;&lt;sys_update_name&gt;sys_ws_operation_aa50521fc38f321068b2f54d0501310a&lt;/sys_update_name&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 09:01:20&lt;/sys_updated_on&gt;&lt;web_service_definition display_value="imageintrigation "&gt;7320d2dbc38f321068b2f54d0501315b&lt;/web_service_definition&gt;&lt;web_service_version/&gt;&lt;/sys_ws_operation&gt;&lt;sys_es_latest_script action="INSERT_OR_UPDATE"&gt;&lt;id&gt;aa50521fc38f321068b2f54d0501310a&lt;/id&gt;&lt;sys_created_by&gt;admin&lt;/sys_created_by&gt;&lt;sys_created_on&gt;2026-02-19 09:01:20&lt;/sys_created_on&gt;&lt;sys_id&gt;ef809a1fc38f321068b2f54d0501314c&lt;/sys_id&gt;&lt;sys_mod_count&gt;0&lt;/sys_mod_count&gt;&lt;sys_updated_by&gt;admin&lt;/sys_updated_by&gt;&lt;sys_updated_on&gt;2026-02-19 09:01:20&lt;/sys_updated_on&gt;&lt;table&gt;sys_ws_operation&lt;/table&gt;&lt;use_es_latest&gt;true&lt;/use_es_latest&gt;&lt;/sys_es_latest_script&gt;&lt;/record_update&gt;</payload>
+<payload_hash>-1247535386</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d9536714c350031068b2f54d050131e1</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c7521e1040000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imagedetails</target_name>
+<type>Scripted REST Resource</type>
+<update_domain>global</update_domain>
+<update_guid>27809a1ffd8f3210f24973d2fd668153</update_guid>
+<update_guid_history>27809a1ffd8f3210f24973d2fd668153:-1247535386</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_page_18573d5fc30b321068b2f54d0501317d</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_page"><sp_page action="INSERT_OR_UPDATE"><category>custom</category><css/><draft>false</draft><dynamic_title_structure/><human_readable_url_structure/><id>imagefromexternaltools</id><internal>false</internal><omit_watcher>false</omit_watcher><public>false</public><roles/><seo_script/><short_description/><sys_class_name>sp_page</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 07:11:40</sys_created_on><sys_id>18573d5fc30b321068b2f54d0501317d</sys_id><sys_mod_count>0</sys_mod_count><sys_name>imagefromexternaltools</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_page_18573d5fc30b321068b2f54d0501317d</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 07:11:40</sys_updated_on><title>imagefromexternaltools</title><use_seo_script>false</use_seo_script></sp_page><sys_translated_text action="delete_multiple" query="documentkey=18573d5fc30b321068b2f54d0501317d"/></record_update>]]></payload>
+<payload_hash>-2073236536</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>d953e314c350031068b2f54d05013199</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c74bd78770000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>imagefromexternaltools</target_name>
+<type>Page</type>
+<update_domain>global</update_domain>
+<update_guid>8177359f500b3210996a7b9147f191be</update_guid>
+<update_guid_history>8177359f500b3210996a7b9147f191be:-2073236536</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sys_security_acl_role_502bd217c343721068b2f54d050131cc</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_security_acl_role"><sys_security_acl_role action="INSERT_OR_UPDATE"><sys_class_name>sys_security_acl_role</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 09:47:32</sys_created_on><sys_id>502bd217c343721068b2f54d050131cc</sys_id><sys_mod_count>0</sys_mod_count><sys_name>u_imgattachment.u_imgattachment_user</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_security_acl display_value="u_imgattachment">582bd217c343721068b2f54d05013180</sys_security_acl><sys_update_name>sys_security_acl_role_502bd217c343721068b2f54d050131cc</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 09:47:32</sys_updated_on><sys_user_role display_value="u_imgattachment_user" name="u_imgattachment_user">002b1ad3c343721068b2f54d050131fb</sys_user_role></sys_security_acl_role></record_update>]]></payload>
+<payload_hash>-2024819971</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>dd536714c350031068b2f54d050131dd</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c754c2d760000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>u_imgattachment</table>
+<target_name>u_imgattachment.u_imgattachment_user</target_name>
+<type>Access Roles</type>
+<update_domain>global</update_domain>
+<update_guid>182bd2174543721013938b73c8b40efa</update_guid>
+<update_guid_history>182bd2174543721013938b73c8b40efa:-2024819971</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>asmt_metric_category_1ee7350fc34bbe1468b2f54d05013183</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update sys_domain="global" table="asmt_metric_category"><asmt_metric_category action="INSERT_OR_UPDATE"><create_stakeholders>false</create_stakeholders><description/><details/><filter table="asmt_metric_type">sys_id=16e7f10fc34bbe1468b2f54d0501319c^EQ<item endquery="false" field="sys_id" goto="false" newquery="false" operator="=" or="false" value="16e7f10fc34bbe1468b2f54d0501319c"/><item endquery="true" field="" goto="false" newquery="false" operator="=" or="false" value=""/></filter><metric_type display_value="Employee health survey">16e7f10fc34bbe1468b2f54d0501319c</metric_type><name>Employee health survey</name><order>100</order><qb_evaluation_method/><roles/><scoring_type>percent</scoring_type><sys_class_name>asmt_metric_category</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-18 12:35:10</sys_created_on><sys_domain>global</sys_domain><sys_domain_path>/</sys_domain_path><sys_id>1ee7350fc34bbe1468b2f54d05013183</sys_id><sys_mod_count>2</sys_mod_count><sys_name>Employee health survey</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>asmt_metric_category_1ee7350fc34bbe1468b2f54d05013183</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 04:56:09</sys_updated_on><table>asmt_metric_type</table><total_metrics>2</total_metrics><weight>10</weight></asmt_metric_category><sys_translated_text action="delete_multiple" query="documentkey=1ee7350fc34bbe1468b2f54d05013183"/></record_update>]]></payload>
+<payload_hash>-171474588</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>dd53e314c350031068b2f54d05013195</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c7441694d0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table>asmt_metric_type</table>
+<target_name>Employee health survey</target_name>
+<type>Metric Category</type>
+<update_domain>global</update_domain>
+<update_guid>0478dd1bc0433210631ac23e23d31408</update_guid>
+<update_guid_history>0478dd1bc0433210631ac23e23d31408:-171474588,5ae7350fd04bbe143184f310133d7c95:-1038526813,92e7350fda4bbe1438770ef1ac82a08a:454252150</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+<sys_update_xml action="INSERT_OR_UPDATE">
+<action>INSERT_OR_UPDATE</action>
+<application display_value="Global">global</application>
+<category>customer</category>
+<comments/>
+<name>sp_row_eda731dfc30b321068b2f54d05013177</name>
+<payload><![CDATA[<?xml version="1.0" encoding="UTF-8"?><record_update table="sp_row"><sp_row action="INSERT_OR_UPDATE"><class_name/><order>1</order><semantic_tag/><sp_column/><sp_container display_value="imagefromexternaltools - Container 1">eca7bd9fc30b321068b2f54d050131d2</sp_container><sys_class_name>sp_row</sys_class_name><sys_created_by>admin</sys_created_by><sys_created_on>2026-02-19 07:12:30</sys_created_on><sys_id>eda731dfc30b321068b2f54d05013177</sys_id><sys_mod_count>0</sys_mod_count><sys_name>1</sys_name><sys_package display_value="Global" source="global">global</sys_package><sys_policy/><sys_scope display_value="Global">global</sys_scope><sys_update_name>sp_row_eda731dfc30b321068b2f54d05013177</sys_update_name><sys_updated_by>admin</sys_updated_by><sys_updated_on>2026-02-19 07:12:30</sys_updated_on></sp_row></record_update>]]></payload>
+<payload_hash>-1248223784</payload_hash>
+<remote_update_set display_value="daily.work.18feb.Vaishali.Singh ">d153e314c350031068b2f54d05013194</remote_update_set>
+<replace_on_upgrade>false</replace_on_upgrade>
+<sys_created_by>admin</sys_created_by>
+<sys_created_on>2026-04-13 10:39:42</sys_created_on>
+<sys_id>dd53e314c350031068b2f54d0501319a</sys_id>
+<sys_mod_count>0</sys_mod_count>
+<sys_recorded_at>19c74be3e4c0000001</sys_recorded_at>
+<sys_updated_by>admin</sys_updated_by>
+<sys_updated_on>2026-04-13 10:39:42</sys_updated_on>
+<table/>
+<target_name>1</target_name>
+<type>Row</type>
+<update_domain>global</update_domain>
+<update_guid>a5a731dfc40b3210c1754e7a36ce0d7b</update_guid>
+<update_guid_history>a5a731dfc40b3210c1754e7a36ce0d7b:-1248223784</update_guid_history>
+<update_set display_value=""/>
+<view/>
+</sys_update_xml>
+</unload>
